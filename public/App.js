@@ -22,21 +22,45 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+var userDB = [{
+  userID: 3019238213902138,
+  username: 'patrick',
+  email: 'patrick@gmail.com',
+  password: 'password'
+}, {
+  userID: 12832112839123,
+  username: 'test',
+  email: 'test@gmail.com',
+  password: 'test'
+}];
+/**
+ * Parent maintains state of all the users. For now, this state is initialized
+ * from the frontend (userDB)
+ */
+
 var Parent = /*#__PURE__*/function (_React$Component) {
   _inherits(Parent, _React$Component);
 
   var _super = _createSuper(Parent);
 
   function Parent() {
+    var _this;
+
     _classCallCheck(this, Parent);
 
-    return _super.apply(this, arguments);
+    _this = _super.call(this);
+    _this.state = {
+      users: userDB
+    };
+    return _this;
   }
 
   _createClass(Parent, [{
     key: "render",
     value: function render() {
-      return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Heading, null));
+      return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Heading, null), /*#__PURE__*/React.createElement(UserTable, {
+        users: this.state.users
+      }));
     }
   }]);
 
@@ -46,6 +70,64 @@ var Parent = /*#__PURE__*/function (_React$Component) {
 function Heading() {
   return /*#__PURE__*/React.createElement("h1", null, "forces");
 }
+/**
+ * Receives user state via props from Parent
+ */
+
+
+var UserTable = /*#__PURE__*/function (_React$Component2) {
+  _inherits(UserTable, _React$Component2);
+
+  var _super2 = _createSuper(UserTable);
+
+  function UserTable() {
+    _classCallCheck(this, UserTable);
+
+    return _super2.apply(this, arguments);
+  }
+
+  _createClass(UserTable, [{
+    key: "render",
+    value: function render() {
+      var users = this.props.users;
+      var userRows = users.map(function (user) {
+        return /*#__PURE__*/React.createElement(UserRow, {
+          key: user.userID,
+          user: user
+        });
+      });
+      return /*#__PURE__*/React.createElement("table", null, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "ID"), /*#__PURE__*/React.createElement("th", null, "Username"), /*#__PURE__*/React.createElement("th", null, "Email"))), /*#__PURE__*/React.createElement("tbody", null, userRows));
+    }
+  }]);
+
+  return UserTable;
+}(React.Component);
+/**
+ * Receives user state via props from UserTable
+ */
+
+
+var UserRow = /*#__PURE__*/function (_React$Component3) {
+  _inherits(UserRow, _React$Component3);
+
+  var _super3 = _createSuper(UserRow);
+
+  function UserRow() {
+    _classCallCheck(this, UserRow);
+
+    return _super3.apply(this, arguments);
+  }
+
+  _createClass(UserRow, [{
+    key: "render",
+    value: function render() {
+      var user = this.props.user;
+      return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, user.userID), /*#__PURE__*/React.createElement("td", null, user.username), /*#__PURE__*/React.createElement("td", null, user.email));
+    }
+  }]);
+
+  return UserRow;
+}(React.Component);
 
 var element = /*#__PURE__*/React.createElement(Parent, null);
 ReactDOM.render(element, document.getElementById('content'));
