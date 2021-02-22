@@ -42,7 +42,11 @@ function registerUser (_, {user}) {
 const app = express();
 const server = new ApolloServer({
   typeDefs: fs.readFileSync('./server/schema.graphql', 'utf-8'),
-  resolvers
+  resolvers,
+  formatError: error => {
+    console.log(error);
+    return error;
+  }
 });
 
 app.use('/', express.static('public'));
