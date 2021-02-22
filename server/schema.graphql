@@ -1,0 +1,13 @@
+# Custom Types
+type User {
+    userID: Int!
+    username: String!
+    email: String!
+    password: String!
+}
+
+# Top Level Declarations
+
+type Query {
+    getUsers: [User!]!
+}
