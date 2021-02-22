@@ -23,12 +23,12 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 var userDB = [{
-  userID: 3019238213902138,
+  userID: 1,
   username: 'patrick',
   email: 'patrick@gmail.com',
   password: 'password'
 }, {
-  userID: 12832112839123,
+  userID: 2,
   username: 'test',
   email: 'test@gmail.com',
   password: 'test'
@@ -52,6 +52,7 @@ var Parent = /*#__PURE__*/function (_React$Component) {
     _this.state = {
       users: []
     };
+    _this.registerUser = _this.registerUser.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -68,10 +69,23 @@ var Parent = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
+    key: "registerUser",
+    value: function registerUser(user) {
+      // TODO use more robust ID generation algorithm
+      user.userID = this.state.users.length + 1;
+      var newUserList = this.state.users.slice();
+      newUserList.push(user);
+      this.setState({
+        users: newUserList
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Heading, null), /*#__PURE__*/React.createElement(UserTable, {
         users: this.state.users
+      }), /*#__PURE__*/React.createElement(RegisterForm, {
+        registerUser: this.registerUser
       }));
     }
   }]);
@@ -139,6 +153,63 @@ var UserRow = /*#__PURE__*/function (_React$Component3) {
   }]);
 
   return UserRow;
+}(React.Component);
+
+var RegisterForm = /*#__PURE__*/function (_React$Component4) {
+  _inherits(RegisterForm, _React$Component4);
+
+  var _super4 = _createSuper(RegisterForm);
+
+  function RegisterForm() {
+    var _this2;
+
+    _classCallCheck(this, RegisterForm);
+
+    _this2 = _super4.call(this);
+    _this2.handleSubmission = _this2.handleSubmission.bind(_assertThisInitialized(_this2));
+    return _this2;
+  }
+
+  _createClass(RegisterForm, [{
+    key: "handleSubmission",
+    value: function handleSubmission(e) {
+      e.preventDefault();
+      var form = document.forms.registerUser;
+      var user = {
+        email: form.email.value,
+        username: form.username.value,
+        password: form.password.value
+      };
+      this.props.registerUser(user); // reset form; in the future, this will be unnecessary as user should be
+      // redirected (maybe to home page) after registration (implicit auth?)
+
+      form.email.value = "";
+      form.username.value = "";
+      form.password.value = "";
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return /*#__PURE__*/React.createElement("form", {
+        name: "registerUser",
+        onSubmit: this.handleSubmission
+      }, /*#__PURE__*/React.createElement("input", {
+        type: "email",
+        name: "email",
+        placeholder: "email"
+      }), /*#__PURE__*/React.createElement("input", {
+        type: "text",
+        name: "username",
+        placeholder: "username"
+      }), /*#__PURE__*/React.createElement("input", {
+        type: "password",
+        name: "password",
+        placeholder: "password"
+      }), /*#__PURE__*/React.createElement("button", null, "register"));
+    }
+  }]);
+
+  return RegisterForm;
 }(React.Component);
 
 var element = /*#__PURE__*/React.createElement(Parent, null);
