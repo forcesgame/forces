@@ -1,0 +1,34 @@
+{
+  "name": "forces",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "babel src --out-dir public --watch --verbose",
+    "start": "nodemon -w server -e js,graphql server/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/forcesgame/forces.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/forcesgame/forces/issues"
+  },
+  "homepage": "https://github.com/forcesgame/forces#readme",
+  "dependencies": {
+    "apollo-server-express": "^2.21.0",
+    "bcrypt": "^5.0.0",
+    "express": "^4.17.1",
+    "graphql": "^15.5.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.17",
+    "@babel/core": "^7.12.17",
+    "@babel/preset-env": "^7.12.17",
+    "@babel/preset-react": "^7.12.13",
+    "nodemon": "^2.0.7"
+  }
+}

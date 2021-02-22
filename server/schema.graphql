@@ -1,0 +1,23 @@
+# Custom Types
+type User {
+    userID: Int!
+    username: String!
+    email: String! # TODO make scalar type for emails?
+    password: String!
+}
+
+input UserInputs {
+    username: String!
+    email: String!
+    password: String!
+}
+
+# Top Level Declarations
+
+type Query {
+    getUsers: [User!]!
+}
+
+type Mutation {
+    registerUser(user: UserInputs!): User!
+}
