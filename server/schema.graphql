@@ -7,7 +7,6 @@ type User {
 }
 
 input UserInputs {
-    userID: Int!
     username: String!
     email: String!
     password: String!
