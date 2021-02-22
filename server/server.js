@@ -21,10 +21,22 @@ const resolvers = {
   Query: {
     getUsers,
   },
+
+  Mutation: {
+    registerUser,
+  }
 }
 
 function getUsers() {
   return userDB;
+}
+
+function registerUser (_, {user}) {
+  // TODO use more robust ID generation algorithm
+  user.userID = userDB.length + 1;
+  userDB.push(user);
+
+  return user;
 }
 
 const app = express();

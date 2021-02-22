@@ -2,6 +2,13 @@
 type User {
     userID: Int!
     username: String!
+    email: String! # TODO make scalar type for emails?
+    password: String!
+}
+
+input UserInputs {
+    userID: Int!
+    username: String!
     email: String!
     password: String!
 }
@@ -10,4 +17,8 @@ type User {
 
 type Query {
     getUsers: [User!]!
+}
+
+type Mutation {
+    registerUser(user: UserInputs!): User!
 }
