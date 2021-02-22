@@ -40,20 +40,20 @@ function graphQLFetch(_x) {
 
 
 function _graphQLFetch() {
-  _graphQLFetch = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(query) {
+  _graphQLFetch = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(query) {
     var variables,
         response,
         result,
         error,
         details,
-        _args3 = arguments;
-    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        _args4 = arguments;
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
-        switch (_context3.prev = _context3.next) {
+        switch (_context4.prev = _context4.next) {
           case 0:
-            variables = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : {};
-            _context3.prev = 1;
-            _context3.next = 4;
+            variables = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : {};
+            _context4.prev = 1;
+            _context4.next = 4;
             return fetch('/graphql', {
               method: 'POST',
               headers: {
@@ -66,12 +66,12 @@ function _graphQLFetch() {
             });
 
           case 4:
-            response = _context3.sent;
-            _context3.next = 7;
+            response = _context4.sent;
+            _context4.next = 7;
             return response.json();
 
           case 7:
-            result = _context3.sent;
+            result = _context4.sent;
 
             if (result.errors) {
               error = result.errors[0];
@@ -84,19 +84,19 @@ function _graphQLFetch() {
               }
             }
 
-            return _context3.abrupt("return", result.data);
+            return _context4.abrupt("return", result.data);
 
           case 12:
-            _context3.prev = 12;
-            _context3.t0 = _context3["catch"](1);
-            alert("Error sending data to server: ".concat(_context3.t0.message));
+            _context4.prev = 12;
+            _context4.t0 = _context4["catch"](1);
+            alert("Error sending data to server: ".concat(_context4.t0.message));
 
           case 15:
           case "end":
-            return _context3.stop();
+            return _context4.stop();
         }
       }
-    }, _callee3, null, [[1, 12]]);
+    }, _callee4, null, [[1, 12]]);
   }));
   return _graphQLFetch.apply(this, arguments);
 }
@@ -285,26 +285,45 @@ var RegisterForm = /*#__PURE__*/function (_React$Component4) {
     _this2 = _super4.call(this);
     _this2.handleSubmission = _this2.handleSubmission.bind(_assertThisInitialized(_this2));
     return _this2;
-  } // TODO hash passwords
-
+  }
 
   _createClass(RegisterForm, [{
     key: "handleSubmission",
-    value: function handleSubmission(e) {
-      e.preventDefault();
-      var form = document.forms.registerUser;
-      var user = {
-        email: form.email.value,
-        username: form.username.value,
-        password: form.password.value
-      };
-      this.props.registerUser(user); // reset form; in the future, this will be unnecessary as user should be
-      // redirected (maybe to home page) after registration (implicit auth?)
+    value: function () {
+      var _handleSubmission = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(e) {
+        var form, user;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                e.preventDefault();
+                form = document.forms.registerUser;
+                user = {
+                  email: form.email.value,
+                  username: form.username.value,
+                  password: form.password.value
+                };
+                this.props.registerUser(user); // reset form; in the future, this will be unnecessary as user should be
+                // redirected (maybe to home page) after registration (implicit auth?)
 
-      form.email.value = "";
-      form.username.value = "";
-      form.password.value = "";
-    }
+                form.email.value = "";
+                form.username.value = "";
+                form.password.value = "";
+
+              case 7:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function handleSubmission(_x3) {
+        return _handleSubmission.apply(this, arguments);
+      }
+
+      return handleSubmission;
+    }()
   }, {
     key: "render",
     value: function render() {

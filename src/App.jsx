@@ -142,8 +142,7 @@ class RegisterForm extends React.Component {
     this.handleSubmission = this.handleSubmission.bind(this);
   }
 
-  // TODO hash passwords
-  handleSubmission(e) {
+  async handleSubmission(e) {
     e.preventDefault();
 
     const form = document.forms.registerUser;

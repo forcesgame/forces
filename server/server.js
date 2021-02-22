@@ -1,6 +1,9 @@
+const bcrypt = require('bcrypt');
 const express = require('express');
 const fs = require('fs');
 const {ApolloServer} = require('apollo-server-express')
+
+const saltRounds = 10;
 
 const userDB = [
   {
@@ -34,6 +37,11 @@ function getUsers() {
 function registerUser (_, {user}) {
   // TODO use more robust ID generation algorithm
   user.userID = userDB.length + 1;
+
+  bcrypt.hash(user.password, saltRounds, (err, hash) => {
+    user.password = hash;
+  })
+
   userDB.push(user);
 
   return user;
