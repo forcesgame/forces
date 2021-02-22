@@ -21,7 +21,15 @@ const userDB = [
 class Parent extends React.Component {
   constructor() {
     super();
-    this.state = {users: userDB};
+    this.state = {users: []};
+  }
+
+  componentDidMount() {
+    this.loadData();
+  }
+
+  loadData() {
+    this.setState({users: userDB});
   }
 
   render() {
