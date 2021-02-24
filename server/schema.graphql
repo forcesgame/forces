@@ -1,6 +1,6 @@
 # Custom Types
 type User {
-    userID: Int!
+    _id: ID!
     username: String!
     email: String! # TODO make scalar type for emails?
     password: String!
@@ -19,5 +19,5 @@ type Query {
 }
 
 type Mutation {
-    registerUser(user: UserInputs!): User!
+    registerUser(user: UserInputs!): User
 }

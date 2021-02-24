@@ -49,7 +49,7 @@ class Parent extends React.Component {
     const query = `
       query {
         getUsers {
-          userID
+          _id
           username
           email
         }
@@ -66,7 +66,7 @@ class Parent extends React.Component {
     const query = `
       mutation registerUser($user: UserInputs!) {
         registerUser(user: $user) {
-          userID
+          _id
         }
       }`;
 
@@ -102,7 +102,7 @@ class UserTable extends React.Component {
     const users = this.props.users;
 
     const userRows = users.map(user =>
-      <UserRow key={user.userID} user={user}/>);
+      <UserRow key={user._id} user={user}/>);
 
     return (
       <table>
@@ -128,7 +128,7 @@ class UserRow extends React.Component {
 
     return (
       <tr>
-        <td>{user.userID}</td>
+        <td>{user._id}</td>
         <td>{user.username}</td>
         <td>{user.email}</td>
       </tr>
