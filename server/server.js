@@ -10,21 +10,6 @@ const saltRounds = 10;
 const mongoURL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}` +
   `@forces.wm1qz.mongodb.net/forces?retryWrites=true&w=majority`;
 
-const userDB = [
-  {
-    userID: 1,
-    username: 'patrick',
-    email: 'patrick@gmail.com',
-    password: 'password',
-  },
-  {
-    userID: 2,
-    username: 'test',
-    email: 'test@gmail.com',
-    password: 'test',
-  }
-];
-
 let db;
 
 const resolvers = {
@@ -41,14 +26,18 @@ async function getUsers() {
   return await db.collection('users').find({}).toArray();
 }
 
-function registerUser(_, {user}) {
-  bcrypt.hash(user.password, saltRounds, (err, hash) => {
+async function registerUser(_, {user}) {
+  await bcrypt.hash(user.password, saltRounds, async (err, hash) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+
     user.password = hash;
+    await db.collection('users').insertOne(user);
   })
 
-  userDB.push(user);
-
-  return user;
+  return await db.collection('users').findOne({'username': user.username});
 }
 
 const app = express();

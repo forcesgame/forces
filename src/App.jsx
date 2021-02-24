@@ -66,7 +66,7 @@ class Parent extends React.Component {
     const query = `
       mutation registerUser($user: UserInputs!) {
         registerUser(user: $user) {
-          userID
+          _id
         }
       }`;
 
