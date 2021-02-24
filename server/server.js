@@ -42,9 +42,6 @@ async function getUsers() {
 }
 
 function registerUser(_, {user}) {
-  // TODO use more robust ID generation algorithm
-  user.userID = userDB.length + 1;
-
   bcrypt.hash(user.password, saltRounds, (err, hash) => {
     user.password = hash;
   })

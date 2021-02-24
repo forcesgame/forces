@@ -133,7 +133,7 @@ var Parent = /*#__PURE__*/function (_React$Component) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                query = "\n      query {\n        getUsers {\n          userID\n          username\n          email\n        }\n      }";
+                query = "\n      query {\n        getUsers {\n          _id\n          username\n          email\n        }\n      }";
                 _context.next = 3;
                 return graphQLFetch(query);
 
@@ -235,7 +235,7 @@ var UserTable = /*#__PURE__*/function (_React$Component2) {
       var users = this.props.users;
       var userRows = users.map(function (user) {
         return /*#__PURE__*/React.createElement(UserRow, {
-          key: user.userID,
+          key: user._id,
           user: user
         });
       });
@@ -265,7 +265,7 @@ var UserRow = /*#__PURE__*/function (_React$Component3) {
     key: "render",
     value: function render() {
       var user = this.props.user;
-      return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, user.userID), /*#__PURE__*/React.createElement("td", null, user.username), /*#__PURE__*/React.createElement("td", null, user.email));
+      return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, user._id), /*#__PURE__*/React.createElement("td", null, user.username), /*#__PURE__*/React.createElement("td", null, user.email));
     }
   }]);
 

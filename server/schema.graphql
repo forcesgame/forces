@@ -1,6 +1,6 @@
 # Custom Types
 type User {
-    userID: Int!
+    _id: ID!
     username: String!
     email: String! # TODO make scalar type for emails?
     password: String!
