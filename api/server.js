@@ -60,11 +60,13 @@ async function connectToDb() {
 
 server.applyMiddleware({app, path: '/graphql'});
 
+const port = process.env.API_SERVER_PORT || 3000;
+
 (async () => {
   try {
     await connectToDb();
-    app.listen(3000, () =>
-      console.log('Forces API server started on port 3000...'));
+    app.listen(port, () =>
+      console.log(`Forces API server started on port ${port}...`));
   } catch (err) {
     console.log(`Error: ${err}`);
   }
