@@ -43,7 +43,7 @@ async function registerUser(_, {user}) {
 const app = express();
 
 const server = new ApolloServer({
-  typeDefs: fs.readFileSync('./server/schema.graphql', 'utf-8'),
+  typeDefs: fs.readFileSync('schema.graphql', 'utf-8'),
   resolvers,
   formatError: error => {
     console.log(error);
@@ -58,14 +58,13 @@ async function connectToDb() {
   db = client.db();
 }
 
-app.use('/', express.static('public'));
 server.applyMiddleware({app, path: '/graphql'});
 
 (async () => {
   try {
     await connectToDb();
     app.listen(3000, () =>
-      console.log('Forces server started on port 3000...'));
+      console.log('Forces API server started on port 3000...'));
   } catch (err) {
     console.log(`Error: ${err}`);
   }
