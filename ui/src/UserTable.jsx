@@ -1,4 +1,4 @@
-/* globals React */
+import React from 'react';
 
 /**
  * Receives user state via props from Parent

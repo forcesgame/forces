@@ -1,6 +1,4 @@
-/* globals React */
-/* eslint "react/jsx-no-undef": "off" */
-
+import React from 'react';
 import UserTable from './UserTable.jsx';
 import RegisterForm from './RegisterForm.jsx';
 import graphQLFetch from './graphQLFetch.js';
