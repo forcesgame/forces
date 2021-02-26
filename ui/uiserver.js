@@ -11,7 +11,7 @@ const env = { UI_API_ENDPOINT };
 
 app.get('/env.js', (req, res) => {
   res.send(`window.ENV = ${JSON.stringify(env)}`);
-})
+});
 
 const port = process.env.UI_SERVER_PORT || 8000;
 

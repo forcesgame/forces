@@ -1,9 +1,15 @@
+/* eslint-disable max-classes-per-file */
+/* eslint "react/react-in-jsx-scope": "off" */
+/* globals React ReactDOM */
+/* eslint "react/jsx-no-undef": "off" */
+/* eslint "no-alert": "off" */
+
 async function graphQLFetch(query, variables = {}) {
   try {
     const response = await fetch(window.ENV.UI_API_ENDPOINT, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({query, variables}),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, variables }),
     });
 
     const result = await response.json();
@@ -20,13 +26,14 @@ async function graphQLFetch(query, variables = {}) {
 
         alert(`${error.message}:\n ${details}`);
       } else {
-        alert`${error.extensions.code}: ${error.message}`
+        alert(`${error.extensions.code}: ${error.message}`);
       }
     }
 
     return result.data;
   } catch (e) {
     alert(`Error sending data to server: ${e.message}`);
+    return null;
   }
 }
 
@@ -37,7 +44,7 @@ async function graphQLFetch(query, variables = {}) {
 class Parent extends React.Component {
   constructor() {
     super();
-    this.state = {users: []};
+    this.state = { users: [] };
     this.registerUser = this.registerUser.bind(this);
   }
 
@@ -58,7 +65,7 @@ class Parent extends React.Component {
     const data = await graphQLFetch(query);
 
     if (data) {
-      this.setState({users: data.getUsers});
+      this.setState({ users: data.getUsers });
     }
   }
 
@@ -70,7 +77,7 @@ class Parent extends React.Component {
         }
       }`;
 
-    const data = await graphQLFetch(query, {user});
+    const data = await graphQLFetch(query, { user });
 
     if (data) {
       this.loadData();
@@ -78,12 +85,14 @@ class Parent extends React.Component {
   }
 
   render() {
+    const { users } = this.state;
+
     return (
-      <React.Fragment>
-        <Heading/>
-        <UserTable users={this.state.users}/>
-        <RegisterForm registerUser={this.registerUser}/>
-      </React.Fragment>
+      <>
+        <Heading />
+        <UserTable users={users} />
+        <RegisterForm registerUser={this.registerUser} />
+      </>
     );
   }
 }
@@ -97,21 +106,22 @@ function Heading() {
 /**
  * Receives user state via props from Parent
  */
+// eslint-disable-next-line react/prefer-stateless-function
 class UserTable extends React.Component {
   render() {
-    const users = this.props.users;
+    const { users } = this.props;
 
-    const userRows = users.map(user =>
-      <UserRow key={user._id} user={user}/>);
+    // eslint-disable-next-line no-underscore-dangle
+    const userRows = users.map((user) => <UserRow key={user._id} user={user} />);
 
     return (
       <table>
         <thead>
-        <tr>
-          <th>ID</th>
-          <th>Username</th>
-          <th>Email</th>
-        </tr>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+          </tr>
         </thead>
         <tbody>{userRows}</tbody>
       </table>
@@ -122,17 +132,19 @@ class UserTable extends React.Component {
 /**
  * Receives user state via props from UserTable
  */
+// eslint-disable-next-line react/prefer-stateless-function
 class UserRow extends React.Component {
   render() {
-    const user = this.props.user;
+    const { user } = this.props;
 
     return (
       <tr>
+        {/* eslint-disable-next-line no-underscore-dangle */}
         <td>{user._id}</td>
         <td>{user.username}</td>
         <td>{user.email}</td>
       </tr>
-    )
+    );
   }
 }
 
@@ -150,28 +162,29 @@ class RegisterForm extends React.Component {
       email: form.email.value,
       username: form.username.value,
       password: form.password.value,
-    }
+    };
 
-    this.props.registerUser(user);
+    const { registerUser } = this.props;
+    registerUser(user);
 
     // reset form; in the future, this will be unnecessary as user should be
     // redirected (maybe to home page) after registration (implicit auth?)
-    form.email.value = "";
-    form.username.value = "";
-    form.password.value = "";
+    form.email.value = '';
+    form.username.value = '';
+    form.password.value = '';
   }
 
   render() {
     return (
       <form name="registerUser" onSubmit={this.handleSubmission}>
-        <input type="email" name="email" placeholder="email"/>
-        <input type="text" name="username" placeholder="username"/>
-        <input type="password" name="password" placeholder="password"/>
-        <button>register</button>
+        <input type="email" name="email" placeholder="email" />
+        <input type="text" name="username" placeholder="username" />
+        <input type="password" name="password" placeholder="password" />
+        <button type="submit">register</button>
       </form>
-    )
+    );
   }
 }
 
-const element = <Parent/>
+const element = <Parent />;
 ReactDOM.render(element, document.getElementById('content'));
