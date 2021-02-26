@@ -7,3 +7,7 @@ import Parent from './Parent.jsx';
 
 const element = <Parent />;
 ReactDOM.render(element, document.getElementById('content'));
+
+if (module.hot) {
+  module.hot.accept();
+}
