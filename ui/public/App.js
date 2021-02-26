@@ -2,10 +2,6 @@
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var _templateObject;
-
-function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -30,6 +26,15 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+/* eslint-disable max-classes-per-file */
+
+/* eslint "react/react-in-jsx-scope": "off" */
+
+/* globals React ReactDOM */
+
+/* eslint "react/jsx-no-undef": "off" */
+
+/* eslint "no-alert": "off" */
 function graphQLFetch(_x) {
   return _graphQLFetch.apply(this, arguments);
 }
@@ -80,7 +85,7 @@ function _graphQLFetch() {
                 details = error.extensions.exception.errors.join('\n ');
                 alert("".concat(error.message, ":\n ").concat(details));
               } else {
-                alert(_templateObject || (_templateObject = _taggedTemplateLiteral(["", ": ", ""])), error.extensions.code, error.message);
+                alert("".concat(error.extensions.code, ": ").concat(error.message));
               }
             }
 
@@ -90,8 +95,9 @@ function _graphQLFetch() {
             _context4.prev = 12;
             _context4.t0 = _context4["catch"](1);
             alert("Error sending data to server: ".concat(_context4.t0.message));
+            return _context4.abrupt("return", null);
 
-          case 15:
+          case 16:
           case "end":
             return _context4.stop();
         }
@@ -199,8 +205,9 @@ var Parent = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
+      var users = this.state.users;
       return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Heading, null), /*#__PURE__*/React.createElement(UserTable, {
-        users: this.state.users
+        users: users
       }), /*#__PURE__*/React.createElement(RegisterForm, {
         registerUser: this.registerUser
       }));
@@ -216,6 +223,7 @@ function Heading() {
 /**
  * Receives user state via props from Parent
  */
+// eslint-disable-next-line react/prefer-stateless-function
 
 
 var UserTable = /*#__PURE__*/function (_React$Component2) {
@@ -232,7 +240,8 @@ var UserTable = /*#__PURE__*/function (_React$Component2) {
   _createClass(UserTable, [{
     key: "render",
     value: function render() {
-      var users = this.props.users;
+      var users = this.props.users; // eslint-disable-next-line no-underscore-dangle
+
       var userRows = users.map(function (user) {
         return /*#__PURE__*/React.createElement(UserRow, {
           key: user._id,
@@ -248,6 +257,7 @@ var UserTable = /*#__PURE__*/function (_React$Component2) {
 /**
  * Receives user state via props from UserTable
  */
+// eslint-disable-next-line react/prefer-stateless-function
 
 
 var UserRow = /*#__PURE__*/function (_React$Component3) {
@@ -291,7 +301,7 @@ var RegisterForm = /*#__PURE__*/function (_React$Component4) {
     key: "handleSubmission",
     value: function () {
       var _handleSubmission = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(e) {
-        var form, user;
+        var form, user, registerUser;
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
@@ -303,14 +313,15 @@ var RegisterForm = /*#__PURE__*/function (_React$Component4) {
                   username: form.username.value,
                   password: form.password.value
                 };
-                this.props.registerUser(user); // reset form; in the future, this will be unnecessary as user should be
+                registerUser = this.props.registerUser;
+                registerUser(user); // reset form; in the future, this will be unnecessary as user should be
                 // redirected (maybe to home page) after registration (implicit auth?)
 
-                form.email.value = "";
-                form.username.value = "";
-                form.password.value = "";
+                form.email.value = '';
+                form.username.value = '';
+                form.password.value = '';
 
-              case 7:
+              case 8:
               case "end":
                 return _context3.stop();
             }
@@ -342,7 +353,9 @@ var RegisterForm = /*#__PURE__*/function (_React$Component4) {
         type: "password",
         name: "password",
         placeholder: "password"
-      }), /*#__PURE__*/React.createElement("button", null, "register"));
+      }), /*#__PURE__*/React.createElement("button", {
+        type: "submit"
+      }, "register"));
     }
   }]);
 
