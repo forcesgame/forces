@@ -18,6 +18,8 @@
         "react"
     ],
     "rules": {
+        "import/extensions": ["error", "always", {"ignorePackages": true}],
+        "no-alert": "off",
         "react/prop-types": "off"
     }
 }

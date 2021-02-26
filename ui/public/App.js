@@ -2,6 +2,14 @@
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+var _graphQLFetch = _interopRequireDefault(require("./graphQLFetch.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -22,91 +30,10 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-/* eslint-disable max-classes-per-file */
-
-/* eslint "react/react-in-jsx-scope": "off" */
-
-/* globals React ReactDOM */
-
-/* eslint "react/jsx-no-undef": "off" */
-
-/* eslint "no-alert": "off" */
-function graphQLFetch(_x) {
-  return _graphQLFetch.apply(this, arguments);
-}
 /**
  * Parent maintains state of all the users. State is initialized from the
  * server.
  */
-
-
-function _graphQLFetch() {
-  _graphQLFetch = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(query) {
-    var variables,
-        response,
-        result,
-        error,
-        details,
-        _args4 = arguments;
-    return regeneratorRuntime.wrap(function _callee4$(_context4) {
-      while (1) {
-        switch (_context4.prev = _context4.next) {
-          case 0:
-            variables = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : {};
-            _context4.prev = 1;
-            _context4.next = 4;
-            return fetch(window.ENV.UI_API_ENDPOINT, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                query: query,
-                variables: variables
-              })
-            });
-
-          case 4:
-            response = _context4.sent;
-            _context4.next = 7;
-            return response.json();
-
-          case 7:
-            result = _context4.sent;
-
-            if (result.errors) {
-              error = result.errors[0];
-
-              if (error.extensions.code === 'BAD_USER_INPUT') {
-                details = error.extensions.exception.errors.join('\n ');
-                alert("".concat(error.message, ":\n ").concat(details));
-              } else {
-                alert("".concat(error.extensions.code, ": ").concat(error.message));
-              }
-            }
-
-            return _context4.abrupt("return", result.data);
-
-          case 12:
-            _context4.prev = 12;
-            _context4.t0 = _context4["catch"](1);
-            alert("Error sending data to server: ".concat(_context4.t0.message));
-            return _context4.abrupt("return", null);
-
-          case 16:
-          case "end":
-            return _context4.stop();
-        }
-      }
-    }, _callee4, null, [[1, 12]]);
-  }));
-  return _graphQLFetch.apply(this, arguments);
-}
-
 var Parent = /*#__PURE__*/function (_React$Component) {
   _inherits(Parent, _React$Component);
 
@@ -141,7 +68,7 @@ var Parent = /*#__PURE__*/function (_React$Component) {
               case 0:
                 query = "\n      query {\n        getUsers {\n          _id\n          username\n          email\n        }\n      }";
                 _context.next = 3;
-                return graphQLFetch(query);
+                return (0, _graphQLFetch.default)(query);
 
               case 3:
                 data = _context.sent;
@@ -177,7 +104,7 @@ var Parent = /*#__PURE__*/function (_React$Component) {
               case 0:
                 query = "\n      mutation registerUser($user: UserInputs!) {\n        registerUser(user: $user) {\n          _id\n        }\n      }";
                 _context2.next = 3;
-                return graphQLFetch(query, {
+                return (0, _graphQLFetch.default)(query, {
                   user: user
                 });
 
@@ -196,7 +123,7 @@ var Parent = /*#__PURE__*/function (_React$Component) {
         }, _callee2, this);
       }));
 
-      function registerUser(_x2) {
+      function registerUser(_x) {
         return _registerUser.apply(this, arguments);
       }
 
@@ -329,7 +256,7 @@ var RegisterForm = /*#__PURE__*/function (_React$Component4) {
         }, _callee3, this);
       }));
 
-      function handleSubmission(_x3) {
+      function handleSubmission(_x2) {
         return _handleSubmission.apply(this, arguments);
       }
 
