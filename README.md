@@ -2,20 +2,23 @@
 
 ## scripts
 
-Start the UI, API server
+Start the API server
 
 ```bash
+cd api
 npm start
 ```
 
-Compile `App.jsx` upon changes
+Start the UI server
 
 ```bash
-npm watch
+cd ui
+npm start
 ```
 
 Reinitialize the database
 
 ```bash
+cd api
 make username=<INSERT USERNAME HERE> init_mongo
 ```
