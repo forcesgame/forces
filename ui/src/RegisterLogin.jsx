@@ -25,7 +25,6 @@ export default function RegisterLogin() {
         <RegisterLoginNavBar />
         <Login />
       </Route>
-      <Route />
     </Switch>
   );
 }
