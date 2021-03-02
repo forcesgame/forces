@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "#start": "UI server. HMR enabled in dev mode",
-    "start": "nodemon -w uiserver.js -w .env uiserver.js",
+    "start": "nodemon -w server.js -w .env server.js",
     "#compile": "Generates JS bundles for production; use with start",
     "compile": "webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1",

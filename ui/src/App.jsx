@@ -3,9 +3,9 @@ import 'whatwg-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Parent from './Parent.jsx';
+import Page from './Page.jsx';
 
-const element = <Parent />;
+const element = <Page />;
 ReactDOM.render(element, document.getElementById('content'));
 
 if (module.hot) {
