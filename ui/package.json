@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "#start": "UI server. HMR enabled in dev mode",
-    "start": "nodemon -w uiserver.js -w .env uiserver.js",
+    "start": "nodemon -w server.js -w .env server.js",
     "#compile": "Generates JS bundles for production; use with start",
     "compile": "webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -21,6 +21,7 @@
     "nodemon": "^2.0.7",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0",
     "whatwg-fetch": "^3.6.1"
   },
   "devDependencies": {

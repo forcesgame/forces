@@ -1,6 +1,8 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
+import graphQLFetch from './graphQLFetch.js';
 
-export default class RegisterForm extends React.Component {
+class Register extends React.Component {
   constructor() {
     super();
     this.handleSubmission = this.handleSubmission.bind(this);
@@ -16,14 +18,22 @@ export default class RegisterForm extends React.Component {
       password: form.password.value,
     };
 
-    const { registerUser } = this.props;
-    registerUser(user);
+    const query = `
+    mutation registerUser($user: UserInputs!) {
+      registerUser(user: $user) {
+        _id
+      }
+    }
+    `;
 
-    // reset form; in the future, this will be unnecessary as user should be
-    // redirected (maybe to home page) after registration (implicit auth?)
-    form.email.value = '';
-    form.username.value = '';
-    form.password.value = '';
+    const data = await graphQLFetch(query, { user });
+    const { history } = this.props; // only accessible because we wrap Register with a Router
+
+    if (data) {
+      history.push('/registerLogin/login');
+    } else {
+      history.push('/error');
+    }
   }
 
   render() {
@@ -37,3 +47,5 @@ export default class RegisterForm extends React.Component {
     );
   }
 }
+
+export default withRouter(Register);
