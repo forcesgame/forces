@@ -8,7 +8,7 @@ function NavBar() {
     <nav>
       <NavLink exact to="/">Home</NavLink>
       {' | '}
-      <NavLink to="registerLogin">Register / Login</NavLink>
+      <NavLink to="/registerLogin/register">Register / Login</NavLink>
     </nav>
   );
 }
