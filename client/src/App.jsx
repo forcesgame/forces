@@ -1,27 +1,36 @@
 import React from 'react';
 import {
-  BrowserRouter as Router,
   Route,
   Switch,
 } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
 
-import Builder from './pages/Builder';
-import Error from './pages/Error';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import NotFound from './pages/NotFound';
+import NavBar from './components/NavBar';
+
+import Builder from './views/Builder';
+import Error from './views/Error';
+import Home from './views/Home';
+import NotFound from './views/NotFound';
 
 function App() {
+  const { isLoading } = useAuth0;
+
+  if (isLoading) {
+    return (
+      <h1>Loading...</h1>
+    );
+  }
+
   return (
-    <Router>
+    <>
+      <NavBar />
       <Switch>
         <Route exact path="/" component={Home} />
-        <Route path="/login" component={Login} />
         <Route path="/builder" component={Builder} />
         <Route path="/error" component={Error} />
         <Route component={NotFound} />
       </Switch>
-    </Router>
+    </>
   );
 }
 
