@@ -6,11 +6,13 @@ export default function Home() {
   const { user } = useAuth0();
 
   if (user) {
+    const usernameKey = `${process.env.REACT_APP_AUTH0_NAMESPACE}username`;
+    const username = user[usernameKey];
     return (
       <h1>
         Welcome to Forces,
         {' '}
-        {user.nickname}
+        {username}
         !
       </h1>
     );
