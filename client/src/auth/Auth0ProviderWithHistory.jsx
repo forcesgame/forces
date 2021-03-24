@@ -18,6 +18,8 @@ const Auth0ProviderWithHistory = ({ children }) => {
       clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
       redirectUri={window.location.origin}
       onRedirectCallback={onRedirectCallback}
+      useRefreshTokens
+      cacheLocation="localstorage"
     >
       {children}
     </Auth0Provider>
