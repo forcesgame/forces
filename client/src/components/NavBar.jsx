@@ -19,9 +19,19 @@ const NavBar = () => (
     <Navbar.Toggle />
     <Navbar.Collapse>
       <Nav className="mr-auto">
-        <AuthNav />
-        <NavDropdown id="basic-nav-dropdown" title="Dropdown">
+        <NavDropdown
+          title={(
+            <div>
+              <img
+                src="#"
+                alt="Dropdown Menu"
+              />
+            </div>
+          )}
+          id="basic-nav-dropdown"
+        >
           <NavDropdown.Item href="/builder">Builder</NavDropdown.Item>
+          <AuthNav />
         </NavDropdown>
       </Nav>
     </Navbar.Collapse>
