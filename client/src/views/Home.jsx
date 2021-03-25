@@ -16,12 +16,32 @@ export default function Home() {
     const usernameKey = `${process.env.REACT_APP_AUTH0_NAMESPACE}username`;
     const username = user[usernameKey];
     return (
-      <h1>
-        Welcome to Forces,
-        {' '}
-        {username}
-        !
-      </h1>
+      <div>
+        <Container>
+          <Jumbotron>
+            <h1 style={{ textAlign: 'center' }}>
+              Welcome to Forces,
+              {' '}
+              {username}
+              !
+            </h1>
+          </Jumbotron>
+        </Container>
+        <Container>
+          <Row>
+            <Col>
+              <Jumbotron>
+                <p style={{ textAlign: 'center' }}>Versus</p>
+              </Jumbotron>
+            </Col>
+            <Col>
+              <Jumbotron>
+                <p style={{ textAlign: 'center' }}>Force Builder</p>
+              </Jumbotron>
+            </Col>
+          </Row>
+        </Container>
+      </div>
     );
   }
 
@@ -34,24 +54,24 @@ export default function Home() {
       </Container>
       <Container>
         <Jumbotron>
-          <h2>Description</h2>
+          <h2 style={{ textAlign: 'center' }}>Description</h2>
         </Jumbotron>
       </Container>
       <Container>
         <Row>
           <Col>
             <Jumbotron>
-              <p>Game Play Image: 1</p>
+              <p style={{ textAlign: 'center' }}>Game Play Image: 1</p>
             </Jumbotron>
           </Col>
           <Col>
             <Jumbotron>
-              <p>Game Play Image: 2</p>
+              <p style={{ textAlign: 'center' }}>Game Play Image: 2</p>
             </Jumbotron>
           </Col>
           <Col>
             <Jumbotron>
-              <p>Game Play Image: 3</p>
+              <p style={{ textAlign: 'center' }}>Game Play Image: 3</p>
             </Jumbotron>
           </Col>
         </Row>
