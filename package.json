@@ -1,0 +1,24 @@
+{
+  "name": "forces",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server",
+    "build": "cd client/ && npm install && npm run build"
+  },
+  "cacheDirectories": [
+    "node_modules",
+    "client/node_modules"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/forcesgame/forces.git"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.22.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
+  }
+}
