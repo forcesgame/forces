@@ -2,20 +2,30 @@ import React from 'react';
 import {
   Navbar,
   Nav,
+  NavDropdown,
 } from 'react-bootstrap';
 import AuthNav from './AuthNav';
 
 const NavBar = () => (
-  <nav bg="light" expand="lg">
-    <Navbar.Brand href="/">Forces</Navbar.Brand>
-    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-    <Navbar.Collapse id="basic-navbar-nav">
+  <Navbar bg="light">
+    <Navbar.Brand href="/">
+      <img
+        src="#"
+        alt="Forces Logo"
+      />
+      {' '}
+      Forces
+    </Navbar.Brand>
+    <Navbar.Toggle />
+    <Navbar.Collapse>
       <Nav className="mr-auto">
-        <Nav.Link href="/builder">Force Builder</Nav.Link>
+        <AuthNav />
+        <NavDropdown id="basic-nav-dropdown" title="Dropdown">
+          <NavDropdown.Item href="/builder">Builder</NavDropdown.Item>
+        </NavDropdown>
       </Nav>
     </Navbar.Collapse>
-    <AuthNav />
-  </nav>
+  </Navbar>
 );
 
 export default NavBar;
