@@ -17,6 +17,9 @@
     "type": "git",
     "url": "git+https://github.com/forcesgame/forces.git"
   },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
   "devDependencies": {
     "eslint": "^7.22.0",
     "eslint-config-airbnb-base": "^14.2.1",
