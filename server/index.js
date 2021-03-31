@@ -1,6 +1,10 @@
+const dotenv = require('dotenv');
 const express = require('express');
+const mongoose = require('mongoose');
 const path = require('path');
+const users = require('./routes/users');
 
+dotenv.config();
 const app = express();
 app.use(express.json());
 
@@ -35,12 +39,19 @@ app.delete('/api', (req, res) => {
   res.json({ request: 'DELETE /api' });
 });
 
+app.use('/api', users);
+
 // reroute remaining requests to client React app
 app.get('*', (req, res) => {
   res.sendFile(path.resolve((__dirname, '../client/build', 'index.html')));
 });
 
-app.listen(5000, () => {
-  // eslint-disable-next-line no-console
-  console.log('API server listening on port 5000...');
-});
+// connect to MongoDB
+mongoose
+  .connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    app.listen(5000, () => {
+      // eslint-disable-next-line no-console
+      console.log('API server listening on port 5000...');
+    });
+  });
