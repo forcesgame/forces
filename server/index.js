@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 // include router modules
+const forces = require('./routes/forces');
 const users = require('./routes/users');
 
 dotenv.config();
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 // mount router modules
+app.use('/api', forces);
 app.use('/api', users);
 
 // reroute remaining requests to client React app
