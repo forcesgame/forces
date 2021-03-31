@@ -22,7 +22,7 @@ app.use('/api', users);
 
 // reroute remaining requests to client React app
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve((__dirname, '../client/build', 'index.html')));
+  res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
 });
 
 // connect to MongoDB
