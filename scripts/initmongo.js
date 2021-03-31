@@ -1,3 +1,5 @@
+/* eslint-disable no-undef,no-restricted-globals,no-underscore-dangle */
+
 /*
 Run using the mongo shell:
 mongo mongodb+srv://forces.wm1qz.mongodb.net/forces scripts/initmongo.js --username <username>
@@ -24,18 +26,18 @@ const patrickID = db.users.findOne({ username: 'patrick' })._id;
 const forces = [
   {
     userID: benID,
-    activeUnits: [],
-    inactiveUnits: [],
+    activeUnits: { bazooka: 0, infantry: 0, tank: 0 },
+    inactiveUnits: { bazooka: 3, infantry: 3, tank: 2 },
   },
   {
     userID: jesusID,
-    activeUnits: [],
-    inactiveUnits: [],
+    activeUnits: { bazooka: 0, infantry: 0, tank: 0 },
+    inactiveUnits: { bazooka: 3, infantry: 3, tank: 2 },
   },
   {
     userID: patrickID,
-    activeUnits: [{ type: 'INFANTRY', health: 100 }],
-    inactiveUnits: [],
+    activeUnits: { bazooka: 0, infantry: 0, tank: 0 },
+    inactiveUnits: { bazooka: 3, infantry: 3, tank: 2 },
   },
 ];
 

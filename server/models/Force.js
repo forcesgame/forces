@@ -1,21 +1,15 @@
 const { model, Schema } = require('mongoose');
 
-const unitSchema = Schema({
-  type: {
-    type: String,
-    enum: ['INFANTRY', 'BAZOOKA', 'TANK'],
-  },
-  health: {
-    type: Number,
-    min: 0,
-    max: 100,
-  },
+const forceDescription = Schema({
+  bazooka: Number,
+  infantry: Number,
+  tank: Number,
 });
 
 const forceSchema = Schema({
   userID: Schema.Types.ObjectId,
-  activeUnits: [unitSchema],
-  inactiveUnits: [unitSchema],
+  activeUnits: forceDescription,
+  inactiveUnits: forceDescription,
 });
 
 forceSchema.index({ userID: 1 });
