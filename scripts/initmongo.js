@@ -32,22 +32,24 @@ const benID = db.users.findOne({ username: 'ben' })._id;
 const jesusID = db.users.findOne({ username: 'jesus' })._id;
 const patrickID = db.users.findOne({ username: 'patrick' })._id;
 
-// TODO add Mongoose versionKey __v
 const forces = [
   {
     userID: benID,
     activeUnits: { bazooka: 0, infantry: 0, tank: 0 },
     inactiveUnits: { bazooka: 3, infantry: 3, tank: 2 },
+    __v: 0,
   },
   {
     userID: jesusID,
     activeUnits: { bazooka: 0, infantry: 0, tank: 0 },
     inactiveUnits: { bazooka: 3, infantry: 3, tank: 2 },
+    __v: 0,
   },
   {
     userID: patrickID,
     activeUnits: { bazooka: 0, infantry: 0, tank: 0 },
     inactiveUnits: { bazooka: 3, infantry: 3, tank: 2 },
+    __v: 0,
   },
 ];
 

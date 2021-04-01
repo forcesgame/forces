@@ -44,7 +44,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"test username\"\n}",
+					"raw": "{\n    \"username\": \"example-user\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -110,6 +110,35 @@
 				"body": {
 					"mode": "raw",
 					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/forces",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"forces"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST /api/forces",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"example-user\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
