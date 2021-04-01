@@ -9,9 +9,18 @@ db.users.remove({});
 db.forces.remove({});
 
 const users = [
-  { username: 'ben' },
-  { username: 'jesus' },
-  { username: 'patrick' },
+  {
+    username: 'ben',
+    __v: 0,
+  },
+  {
+    username: 'jesus',
+    __v: 0,
+  },
+  {
+    username: 'patrick',
+    __v: 0,
+  },
 ];
 
 db.users.insertMany(users);
@@ -28,16 +37,19 @@ const forces = [
     userID: benID,
     activeUnits: { bazooka: 0, infantry: 0, tank: 0 },
     inactiveUnits: { bazooka: 3, infantry: 3, tank: 2 },
+    __v: 0,
   },
   {
     userID: jesusID,
     activeUnits: { bazooka: 0, infantry: 0, tank: 0 },
     inactiveUnits: { bazooka: 3, infantry: 3, tank: 2 },
+    __v: 0,
   },
   {
     userID: patrickID,
     activeUnits: { bazooka: 0, infantry: 0, tank: 0 },
     inactiveUnits: { bazooka: 3, infantry: 3, tank: 2 },
+    __v: 0,
   },
 ];
 

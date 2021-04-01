@@ -38,7 +38,36 @@
 			"response": []
 		},
 		{
-			"name": "GET /api/users/patrick",
+			"name": "POST /api/users",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"example-user\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/users/example-user",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -55,7 +84,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5000/api/users/patrick",
+					"raw": "http://localhost:5000/api/users/example-user",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -64,7 +93,7 @@
 					"path": [
 						"api",
 						"users",
-						"patrick"
+						"example-user"
 					]
 				}
 			},
@@ -103,7 +132,36 @@
 			"response": []
 		},
 		{
-			"name": "GET /api/forces/patrick",
+			"name": "POST /api/forces",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"example-user\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/forces",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"forces"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/forces/example-user",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -120,7 +178,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5000/api/forces/patrick",
+					"raw": "http://localhost:5000/api/forces/example-user",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -129,7 +187,36 @@
 					"path": [
 						"api",
 						"forces",
-						"patrick"
+						"example-user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PATCH /api/forces",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"example-user\",\n    \"activeUnits\": {\n        \"bazooka\": 1,\n        \"infantry\": 1,\n        \"tank\": 1\n    },\n    \"inactiveUnits\": {\n        \"bazooka\": 2,\n        \"infantry\": 2,\n        \"tank\": 1\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/forces",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"forces"
 					]
 				}
 			},

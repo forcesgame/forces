@@ -1,17 +1,30 @@
 const { model, Schema } = require('mongoose');
 
-const forceDescription = Schema({
-  bazooka: Number,
-  infantry: Number,
-  tank: Number,
+const forceDescriptionSchema = Schema({
+  _id: false,
+  bazooka: {
+    type: Number,
+    default: 0,
+  },
+  infantry: {
+    type: Number,
+    default: 0,
+  },
+  tank: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const forceSchema = Schema({
   userID: Schema.Types.ObjectId,
-  activeUnits: forceDescription,
-  inactiveUnits: forceDescription,
+  activeUnits: forceDescriptionSchema,
+  inactiveUnits: forceDescriptionSchema,
 });
 
 forceSchema.index({ userID: 1 });
 
-module.exports = model('Force', forceSchema);
+module.exports = {
+  Force: model('Force', forceSchema),
+  ForceDescription: model('ForceDescription', forceDescriptionSchema),
+};
