@@ -9,9 +9,18 @@ db.users.remove({});
 db.forces.remove({});
 
 const users = [
-  { username: 'ben' },
-  { username: 'jesus' },
-  { username: 'patrick' },
+  {
+    username: 'ben',
+    __v: 0,
+  },
+  {
+    username: 'jesus',
+    __v: 0,
+  },
+  {
+    username: 'patrick',
+    __v: 0,
+  },
 ];
 
 db.users.insertMany(users);
@@ -23,6 +32,7 @@ const benID = db.users.findOne({ username: 'ben' })._id;
 const jesusID = db.users.findOne({ username: 'jesus' })._id;
 const patrickID = db.users.findOne({ username: 'patrick' })._id;
 
+// TODO add Mongoose versionKey __v
 const forces = [
   {
     userID: benID,
