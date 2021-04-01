@@ -1,6 +1,7 @@
 const { model, Schema } = require('mongoose');
 
 const forceDescriptionSchema = Schema({
+  _id: false,
   bazooka: {
     type: Number,
     default: 0,
