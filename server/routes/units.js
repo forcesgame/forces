@@ -95,4 +95,37 @@ router.patch('/units/:id', async (req, res) => {
   }
 });
 
+router.get('/units/info/infantry', (req, res) => {
+  res.send({
+    type: 'INFANTRY',
+    rating: '1',
+    maxStamina: '3',
+    maxHealth: '100',
+    strongAgainst: ['BAZOOKA'],
+    weakAgainst: ['TANK'],
+  });
+});
+
+router.get('/units/info/bazooka', (req, res) => {
+  res.send({
+    type: 'BAZOOKA',
+    rating: '2',
+    maxStamina: '2',
+    maxHealth: '125',
+    strongAgainst: ['TANK'],
+    weakAgainst: ['INFANTRY'],
+  });
+});
+
+router.get('/units/info/tank', (req, res) => {
+  res.send({
+    type: 'TANK',
+    rating: '3',
+    maxStamina: '1',
+    maxHealth: '200',
+    strongAgainst: ['INFANTRY'],
+    weakAgainst: ['BAZOOKA'],
+  });
+});
+
 module.exports = router;
