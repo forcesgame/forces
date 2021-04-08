@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import axios from 'axios';
 
-export default function Builder() {
+function Builder() {
   const { user } = useAuth0();
   const [username, setUsername] = useState('');
   // eslint-disable-next-line no-unused-vars
@@ -37,3 +37,7 @@ export default function Builder() {
     </>
   );
 }
+
+export default withAuthenticationRequired(Builder, {
+  onRedirecting: () => <h1>Loading</h1>,
+});
