@@ -3,6 +3,7 @@ const express = require('express');
 
 const router = express.Router();
 const { Force, ForceDescription } = require('../models/Force');
+const Unit = require('../models/Unit');
 const User = require('../models/User');
 
 module.exports = router;
@@ -53,6 +54,8 @@ async function initializeForces() {
 
 router.post('/database/initialize', async (req, res) => {
   try {
+    await Unit.deleteMany();
+
     await initializeUsers();
     await initializeForces();
 

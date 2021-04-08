@@ -6,6 +6,7 @@ const path = require('path');
 // include router modules
 const database = require('./routes/database');
 const forces = require('./routes/forces');
+const units = require('./routes/units');
 const users = require('./routes/users');
 
 dotenv.config();
@@ -20,6 +21,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 // mount router modules
 app.use('/api', database);
 app.use('/api', forces);
+app.use('/api', units);
 app.use('/api', users);
 
 // reroute remaining requests to client React app
