@@ -1,7 +1,10 @@
 const { model, Schema } = require('mongoose');
 
 const userSchema = Schema({
-  username: String,
+  username: {
+    type: String,
+    unique: true,
+  },
 });
 
 userSchema.index({ username: 1 });

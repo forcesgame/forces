@@ -6,6 +6,27 @@
 	},
 	"item": [
 		{
+			"name": "POST /api/database",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/database/initialize",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"database",
+						"initialize"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "GET /api/users",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
@@ -200,7 +221,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"example-user\",\n    \"activeUnits\": {\n        \"bazooka\": 1,\n        \"infantry\": 1,\n        \"tank\": 1\n    },\n    \"inactiveUnits\": {\n        \"bazooka\": 2,\n        \"infantry\": 2,\n        \"tank\": 1\n    }\n}",
+					"raw": "{\n    \"username\": \"example-user\",\n    \"activeUnits\": [],\n    \"inactiveUnits\": []\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -217,6 +238,232 @@
 					"path": [
 						"api",
 						"forces"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/units",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/units",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"units"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST /api/units",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"type\": \"INFANTRY\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/units",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"units"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/units/{id}",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/units/{id}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"units",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PATCH /api/units/{id}",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"health\": 100,\n    \"stamina\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/units/{id}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"units",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/units/info/infantry",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/units/info/infantry",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"units",
+						"info",
+						"infantry"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/units/info/bazooka",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/units/info/bazooka",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"units",
+						"info",
+						"bazooka"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/units/info/tank",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/units/info/tank",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"units",
+						"info",
+						"tank"
 					]
 				}
 			},
