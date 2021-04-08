@@ -4,7 +4,6 @@ const express = require('express');
 const router = express.Router();
 const Force = require('../models/Force');
 const Unit = require('../models/Unit');
-const User = require('../models/User');
 
 /**
  * Gets all Forces
@@ -25,12 +24,10 @@ router.get('/forces', async (req, res) => {
 /**
  * Gets a single Force associated with a user
  */
-router.get('/forces/:username', async (req, res) => {
+router.get('/forces/:id', async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.params.username });
-    const { _id } = user;
-
-    res.send(await Force.findOne({ userID: _id }));
+    const { id } = req.params;
+    res.send(await Force.findOne({ userID: id }));
   } catch (error) {
     res.status(400);
     res.send({
@@ -77,20 +74,19 @@ function generateDefaultUnits() {
  *   username: <insert-username-here>
  * }
  */
-router.post('/forces', async (req, res) => {
+router.post('/forces/:id', async (req, res) => {
   try {
-    const { username } = req.body;
-    const user = await User.findOne({ username });
-    const { _id } = user;
+    // TODO validate that id corresponds to a valid user
+    const { id } = req.params;
 
     const force = new Force({
-      userID: _id,
+      userID: id,
       activeUnits: [],
       inactiveUnits: generateDefaultUnits(),
     });
 
     await force.save();
-    res.send(await Force.findOne({ userID: _id }));
+    res.send(await Force.findOne({ userID: id }));
   } catch (error) {
     res.status(400);
     res.send({
@@ -118,12 +114,10 @@ router.post('/forces', async (req, res) => {
  *   ]
  * }
  */
-router.patch('/forces', async (req, res) => {
+router.patch('/forces/:id', async (req, res) => {
   try {
-    const { username } = req.body;
-    const user = await User.findOne({ username });
-    const { _id } = user;
-    const force = await Force.findOne({ userID: _id });
+    const { id } = req.params;
+    const force = await Force.findOne({ userID: id });
 
     if (req.body.activeUnits) {
       force.activeUnits = req.body.activeUnits;
@@ -135,7 +129,7 @@ router.patch('/forces', async (req, res) => {
 
     await force.save();
 
-    res.send(await Force.findOne({ userID: _id }));
+    res.send(await Force.findOne({ userID: id }));
   } catch (error) {
     res.status(400);
     res.send({
