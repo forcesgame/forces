@@ -221,7 +221,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"example-user\",\n    \"activeUnits\": {\n        \"bazooka\": 1,\n        \"infantry\": 1,\n        \"tank\": 1\n    },\n    \"inactiveUnits\": {\n        \"bazooka\": 2,\n        \"infantry\": 2,\n        \"tank\": 1\n    }\n}",
+					"raw": "{\n    \"username\": \"example-user\",\n    \"activeUnits\": [],\n    \"inactiveUnits\": []\n}",
 					"options": {
 						"raw": {
 							"language": "json"

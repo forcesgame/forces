@@ -2,7 +2,7 @@
 const express = require('express');
 
 const router = express.Router();
-const { Force, ForceDescription } = require('../models/Force');
+const Force = require('../models/Force');
 const Unit = require('../models/Unit');
 const User = require('../models/User');
 
@@ -20,30 +20,60 @@ async function initializeUsers() {
   await patrick.save();
 }
 
+function generateDefaultUnits() {
+  const defaultInfantryCount = 3;
+  const defaultBazookaCount = 3;
+  const defaultTankCount = 2;
+
+  const units = [];
+  let unit;
+
+  for (let i = 0; i < defaultInfantryCount; i += 1) {
+    unit = new Unit({ type: 'INFANTRY' });
+    unit.save();
+    units.push(unit._id);
+  }
+
+  for (let i = 0; i < defaultBazookaCount; i += 1) {
+    unit = new Unit({ type: 'BAZOOKA' });
+    unit.save();
+    units.push(unit._id);
+  }
+
+  for (let i = 0; i < defaultTankCount; i += 1) {
+    unit = new Unit({ type: 'TANK' });
+    unit.save();
+    units.push(unit._id);
+  }
+
+  return units;
+}
+
 async function initializeForces() {
+  await Unit.deleteMany();
   await Force.deleteMany();
 
-  const benId = User.findOne({ username: 'ben' })._id;
+  const benID = await User.findOne({ username: 'ben' }, { _id: 1 });
   const benForce = new Force({
-    userId: benId,
-    activeUnits: new ForceDescription({ bazooka: 0, infantry: 0, tank: 0 }),
-    inactiveUnits: new ForceDescription({ bazooka: 3, infantry: 3, tank: 2 }),
+    userID: benID,
+    activeUnits: [],
+    inactiveUnits: generateDefaultUnits(),
     __v: 0,
   });
 
-  const jesusId = User.findOne({ username: 'jesus' })._id;
+  const jesusID = await User.findOne({ username: 'jesus' }, { _id: 1 });
   const jesusForce = new Force({
-    userId: jesusId,
-    activeUnits: new ForceDescription({ bazooka: 0, infantry: 0, tank: 0 }),
-    inactiveUnits: new ForceDescription({ bazooka: 3, infantry: 3, tank: 2 }),
+    userID: jesusID,
+    activeUnits: [],
+    inactiveUnits: generateDefaultUnits(),
     __v: 0,
   });
 
-  const patrickId = User.findOne({ username: 'ben' })._id;
+  const patrickID = await User.findOne({ username: 'patrick' }, { _id: 1 });
   const patrickForce = new Force({
-    userId: patrickId,
-    activeUnits: new ForceDescription({ bazooka: 0, infantry: 0, tank: 0 }),
-    inactiveUnits: new ForceDescription({ bazooka: 3, infantry: 3, tank: 2 }),
+    userID: patrickID,
+    activeUnits: [],
+    inactiveUnits: generateDefaultUnits(),
     __v: 0,
   });
 
@@ -54,8 +84,6 @@ async function initializeForces() {
 
 router.post('/database/initialize', async (req, res) => {
   try {
-    await Unit.deleteMany();
-
     await initializeUsers();
     await initializeForces();
 
