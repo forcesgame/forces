@@ -5,35 +5,68 @@ import axios from 'axios';
 function Builder() {
   const { user } = useAuth0();
   const [username, setUsername] = useState('');
+  const [userID, setUserID] = useState('');
   // eslint-disable-next-line no-unused-vars
-  const [force, setForce] = useState(null);
+  const [force, setForce] = useState({});
+  // eslint-disable-next-line no-unused-vars
+  const [activeUnits, setActiveUnits] = useState([]);
+  // eslint-disable-next-line no-unused-vars
+  const [inactiveUnits, setInactiveUnits] = useState([]);
 
-  async function getForce() {
+  const initializeUsername = async () => {
     try {
-      if (username === '') return;
-      const response = await axios.get(`/api/forces/${username}`);
-      setForce(response.data);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    if (user) {
       const usernameKey = `${process.env.REACT_APP_AUTH0_NAMESPACE}username`;
       setUsername(user[usernameKey]);
+    } catch (error) {
+      console.error(error.message);
     }
-    getForce();
-  });
+  };
 
-  if (force == null) {
-    return <h1>Loading</h1>;
+  const initializeUserID = async () => {
+    if (username === '') return;
+    axios.get(`/api/users/${username}`)
+      .then((response) => {
+        setUserID(response.data._id);
+      })
+      .catch((error) => console.error(error.message));
+  };
+
+  const initializeForce = async () => {
+    if (userID === '') return;
+    axios.get(`/api/forces/${userID}`)
+      .then((response) => {
+        setForce(response.data);
+        setActiveUnits(response.data.activeUnits);
+        setInactiveUnits(response.data.inactiveUnits);
+      })
+      .catch((error) => console.error(error.message));
+  };
+
+  useEffect(() => {
+    initializeUsername();
+  }, []);
+
+  useEffect(() => {
+    initializeUserID();
+  }, [username]);
+
+  useEffect(() => {
+    initializeForce();
+  }, [userID]);
+
+  if (force === {}) {
+    return (
+      <>
+        <h1>Loading...</h1>
+      </>
+    );
   }
 
   return (
     <>
-      <h1>builder</h1>
+      <h1>
+        {console.log(force)}
+      </h1>
     </>
   );
 }
