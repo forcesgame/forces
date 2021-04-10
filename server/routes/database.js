@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 const express = require('express');
 
 const router = express.Router();
@@ -11,9 +10,9 @@ module.exports = router;
 async function initializeUsers() {
   await User.deleteMany();
 
-  const ben = new User({ username: 'ben', __v: 0 });
-  const jesus = new User({ username: 'jesus', __v: 0 });
-  const patrick = new User({ username: 'patrick', __v: 0 });
+  const ben = new User({ username: 'ben' });
+  const jesus = new User({ username: 'jesus' });
+  const patrick = new User({ username: 'patrick' });
 
   await ben.save();
   await jesus.save();
@@ -58,7 +57,6 @@ async function initializeForces() {
     userID: benID,
     activeUnits: [],
     inactiveUnits: generateDefaultUnits(),
-    __v: 0,
   });
 
   const jesusID = await User.findOne({ username: 'jesus' }, { _id: 1 });
@@ -66,7 +64,6 @@ async function initializeForces() {
     userID: jesusID,
     activeUnits: [],
     inactiveUnits: generateDefaultUnits(),
-    __v: 0,
   });
 
   const patrickID = await User.findOne({ username: 'patrick' }, { _id: 1 });
@@ -74,7 +71,6 @@ async function initializeForces() {
     userID: patrickID,
     activeUnits: [],
     inactiveUnits: generateDefaultUnits(),
-    __v: 0,
   });
 
   await benForce.save();
