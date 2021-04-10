@@ -1,11 +1,8 @@
 const { model, Schema } = require('mongoose');
 
 const forceSchema = Schema({
-  userID: Schema.Types.ObjectId,
-  activeUnits: [],
-  inactiveUnits: [],
+  user: { type: Schema.Types.ObjectId, ref: 'User' },
+  units: [{ type: Schema.Types.ObjectId, ref: 'Unit' }],
 });
-
-forceSchema.index({ userID: 1 });
 
 module.exports = model('Force', forceSchema);
