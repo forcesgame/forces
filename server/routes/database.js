@@ -5,8 +5,6 @@ const Force = require('../models/Force');
 const Unit = require('../models/Unit');
 const User = require('../models/User');
 
-module.exports = router;
-
 async function initializeUsers() {
   await User.deleteMany();
 
@@ -127,3 +125,8 @@ router.post('/database/initialize', async (req, res) => {
     });
   }
 });
+
+module.exports = {
+  database: router,
+  generateDefaultUnits,
+};

@@ -168,7 +168,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5000/api/forces/",
+					"raw": "http://localhost:5000/api/forces/{id}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -177,7 +177,7 @@
 					"path": [
 						"api",
 						"forces",
-						""
+						"{id}"
 					]
 				}
 			},
@@ -201,7 +201,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5000/api/forces/",
+					"raw": "http://localhost:5000/api/forces/{id}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -210,7 +210,7 @@
 					"path": [
 						"api",
 						"forces",
-						""
+						"{id}"
 					]
 				}
 			},
