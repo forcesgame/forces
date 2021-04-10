@@ -50,10 +50,11 @@ function Builder() {
     initializeForce();
   }, [userID]);
 
-  const onUnitsChange = (units) => {
-    console.log('In Builder');
-    console.table(units);
-    // TODO integrate w/ database
+  const onUnitsChange = async (units) => {
+    if (!userID) return;
+    axios.patch(`/api/forces/${userID}`, { units })
+      .then(window.alert('Force saved!'))
+      .catch((error) => console.error(error.message));
   };
 
   if (!force) {

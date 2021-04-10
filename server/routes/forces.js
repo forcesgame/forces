@@ -2,6 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 const Force = require('../models/Force');
+const Unit = require('../models/Unit');
 
 const database = require('./database');
 
@@ -96,13 +97,21 @@ router.post('/forces/:userID', async (req, res) => {
  */
 router.patch('/forces/:userID', async (req, res) => {
   try {
-    const force = await Force.findOne({ user: req.params.userID });
+    const force = await Force
+      .findOne({ user: req.params.userID })
+      .populate('user')
+      .populate('units');
 
     if (force === null) {
       res.status(204);
       res.end();
     } else {
       if (req.body.units) {
+        req.body.units.forEach(async (unit) => Unit.findOneAndUpdate(
+          { _id: unit._id },
+          { active: unit.active },
+        ).catch((error) => console.error(error.message)));
+
         force.units = req.body.units;
       }
 

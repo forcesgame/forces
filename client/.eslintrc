@@ -19,6 +19,7 @@
     ],
     "root": true,
     "rules": {
+        "no-alert": "off",
         "no-console": "off",
         "no-underscore-dangle": "off",
         "react/prop-types": "off"
