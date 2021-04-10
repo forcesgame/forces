@@ -28,19 +28,46 @@ function generateDefaultUnits() {
   let unit;
 
   for (let i = 0; i < defaultInfantryCount; i += 1) {
-    unit = new Unit({ type: 'INFANTRY' });
+    unit = new Unit({
+      type: 'INFANTRY',
+      health: 100,
+      maxHealth: 100,
+      maxStamina: 3,
+      rating: 1,
+      stamina: 2,
+      strongAgainst: ['BAZOOKA'],
+      weakAgainst: ['TANK'],
+    });
     unit.save();
     units.push(unit._id);
   }
 
   for (let i = 0; i < defaultBazookaCount; i += 1) {
-    unit = new Unit({ type: 'BAZOOKA' });
+    unit = new Unit({
+      type: 'BAZOOKA',
+      health: 125,
+      maxHealth: 125,
+      maxStamina: 2,
+      rating: 2,
+      stamina: 2,
+      strongAgainst: ['TANK'],
+      weakAgainst: ['INFANTRY'],
+    });
     unit.save();
     units.push(unit._id);
   }
 
   for (let i = 0; i < defaultTankCount; i += 1) {
-    unit = new Unit({ type: 'TANK' });
+    unit = new Unit({
+      type: 'TANK',
+      health: 200,
+      maxHealth: 200,
+      maxStamina: 1,
+      rating: 3,
+      stamina: 1,
+      strongAgainst: ['INFANTRY'],
+      weakAgainst: ['BAZOOKA'],
+    });
     unit.save();
     units.push(unit._id);
   }
@@ -55,22 +82,19 @@ async function initializeForces() {
   const benID = await User.findOne({ username: 'ben' }, { _id: 1 });
   const benForce = new Force({
     user: benID,
-    activeUnits: [],
-    inactiveUnits: generateDefaultUnits(),
+    units: generateDefaultUnits(),
   });
 
   const jesusID = await User.findOne({ username: 'jesus' }, { _id: 1 });
   const jesusForce = new Force({
     user: jesusID,
-    activeUnits: [],
-    inactiveUnits: generateDefaultUnits(),
+    units: generateDefaultUnits(),
   });
 
   const patrickID = await User.findOne({ username: 'patrick' }, { _id: 1 });
   const patrickForce = new Force({
     user: patrickID,
-    activeUnits: [],
-    inactiveUnits: generateDefaultUnits(),
+    units: generateDefaultUnits(),
   });
 
   await benForce.save();
@@ -88,8 +112,7 @@ router.post('/database/initialize', async (req, res) => {
     const forces = await Force
       .find()
       .populate('user')
-      .populate('activeUnits')
-      .populate('inactiveUnits');
+      .populate('units');
 
     res.send({
       Users: users,
