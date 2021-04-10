@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 const express = require('express');
 
 const router = express.Router();
@@ -10,7 +9,10 @@ const Unit = require('../models/Unit');
  */
 router.get('/forces', async (req, res) => {
   try {
-    res.send(await Force.find());
+    res.send(await Force.find()
+      .populate('user')
+      .populate('activeUnits')
+      .populate('inactiveUnits'));
   } catch (error) {
     res.status(400);
     res.send({
@@ -27,7 +29,11 @@ router.get('/forces', async (req, res) => {
 router.get('/forces/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    res.send(await Force.findOne({ userID: id }));
+    res.send(await Force
+      .findOne({ user: id })
+      .populate('user')
+      .populate('activeUnits')
+      .populate('inactiveUnits'));
   } catch (error) {
     res.status(400);
     res.send({
@@ -80,13 +86,13 @@ router.post('/forces/:id', async (req, res) => {
     const { id } = req.params;
 
     const force = new Force({
-      userID: id,
+      user: id,
       activeUnits: [],
       inactiveUnits: generateDefaultUnits(),
     });
 
     await force.save();
-    res.send(await Force.findOne({ userID: id }));
+    res.send(await Force.findOne({ user: id }));
   } catch (error) {
     res.status(400);
     res.send({
@@ -117,7 +123,7 @@ router.post('/forces/:id', async (req, res) => {
 router.patch('/forces/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const force = await Force.findOne({ userID: id });
+    const force = await Force.findOne({ user: id });
 
     if (req.body.activeUnits) {
       force.activeUnits = req.body.activeUnits;
@@ -129,7 +135,7 @@ router.patch('/forces/:id', async (req, res) => {
 
     await force.save();
 
-    res.send(await Force.findOne({ userID: id }));
+    res.send(await Force.findOne({ user: id }));
   } catch (error) {
     res.status(400);
     res.send({

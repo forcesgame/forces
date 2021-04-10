@@ -54,21 +54,21 @@ async function initializeForces() {
 
   const benID = await User.findOne({ username: 'ben' }, { _id: 1 });
   const benForce = new Force({
-    userID: benID,
+    user: benID,
     activeUnits: [],
     inactiveUnits: generateDefaultUnits(),
   });
 
   const jesusID = await User.findOne({ username: 'jesus' }, { _id: 1 });
   const jesusForce = new Force({
-    userID: jesusID,
+    user: jesusID,
     activeUnits: [],
     inactiveUnits: generateDefaultUnits(),
   });
 
   const patrickID = await User.findOne({ username: 'patrick' }, { _id: 1 });
   const patrickForce = new Force({
-    userID: patrickID,
+    user: patrickID,
     activeUnits: [],
     inactiveUnits: generateDefaultUnits(),
   });
@@ -83,8 +83,13 @@ router.post('/database/initialize', async (req, res) => {
     await initializeUsers();
     await initializeForces();
 
-    const users = await User.find();
-    const forces = await Force.find();
+    const users = await User
+      .find();
+    const forces = await Force
+      .find()
+      .populate('user')
+      .populate('activeUnits')
+      .populate('inactiveUnits');
 
     res.send({
       Users: users,
