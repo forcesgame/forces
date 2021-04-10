@@ -1,14 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 
-const BuilderRow = ({ unit }) => (
-  <tr>
-    <td>{unit.type}</td>
-    <td>{unit.rating}</td>
-  </tr>
-);
+function BuilderRow({ unit }) {
+  const [active, setActive] = useState(false);
 
-const BuilderTable = ({ force }) => {
+  useEffect(() => {
+    if (unit === null) return;
+    setActive(unit.active);
+  }, []);
+
+  return (
+    <tr>
+      <td>{unit.type}</td>
+      <td>
+        {active
+          ? <Form.Check defaultChecked />
+          : <Form.Check />}
+      </td>
+      <td>{unit.rating}</td>
+    </tr>
+  );
+}
+
+function BuilderTable({ force }) {
   const { units } = force;
   let builderRows = [];
 
@@ -16,19 +32,31 @@ const BuilderTable = ({ force }) => {
     builderRows = units.map((unit) => <BuilderRow key={unit._id} unit={unit} />);
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = document.forms.forceUpdate;
+    // TODO
+  };
+
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Rating</th>
-        </tr>
-      </thead>
-      <tbody>
-        {builderRows}
-      </tbody>
-    </Table>
+    <Form name="forceUpdate" onSubmit={handleSubmit}>
+      <Table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Active</th>
+            <th>Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          {builderRows}
+        </tbody>
+      </Table>
+      <Button variant="primary" type="submit">
+        Save
+      </Button>
+    </Form>
   );
-};
+}
 
 export default BuilderTable;
