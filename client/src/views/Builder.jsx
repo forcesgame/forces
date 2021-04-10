@@ -2,16 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import axios from 'axios';
 
+import BuilderTable from '../components/builder/BuilderTable';
+
 function Builder() {
   const { user } = useAuth0();
   const [username, setUsername] = useState('');
   const [userID, setUserID] = useState('');
-  // eslint-disable-next-line no-unused-vars
   const [force, setForce] = useState({});
-  // eslint-disable-next-line no-unused-vars
-  const [activeUnits, setActiveUnits] = useState([]);
-  // eslint-disable-next-line no-unused-vars
-  const [inactiveUnits, setInactiveUnits] = useState([]);
 
   const initializeUsername = async () => {
     try {
@@ -36,8 +33,6 @@ function Builder() {
     axios.get(`/api/forces/${userID}`)
       .then((response) => {
         setForce(response.data);
-        setActiveUnits(response.data.activeUnits);
-        setInactiveUnits(response.data.inactiveUnits);
       })
       .catch((error) => console.error(error.message));
   };
@@ -63,11 +58,7 @@ function Builder() {
   }
 
   return (
-    <>
-      <h1>
-        {console.log(force)}
-      </h1>
-    </>
+    <BuilderTable force={force} />
   );
 }
 
