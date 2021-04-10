@@ -3,11 +3,9 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 
-const BuilderRow = (props) => {
-  const { unit } = props;
-
+const BuilderRow = ({ unit, onUnitChange }) => {
   const handleChange = () => {
-    props.onUnitChange(unit);
+    onUnitChange(unit);
   };
 
   return (
@@ -24,7 +22,7 @@ const BuilderRow = (props) => {
   );
 };
 
-function BuilderTable({ force }) {
+function BuilderTable({ force, onUnitsChange }) {
   const [units, setUnits] = useState([]);
   const [builderRows, setBuilderRows] = useState([]);
 
@@ -64,14 +62,11 @@ function BuilderTable({ force }) {
 
   useEffect(() => {
     initializeBuilderRows();
-    console.table(units);
   }, [units]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const form = document.forms.forceUpdate;
-    console.log(form);
-    // TODO
+    onUnitsChange(units);
   };
 
   if (!units) {

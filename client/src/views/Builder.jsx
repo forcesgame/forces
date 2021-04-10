@@ -21,7 +21,7 @@ function Builder() {
   };
 
   const initializeUserID = async () => {
-    if (username === '') return;
+    if (!username) return;
     axios.get(`/api/users/${username}`)
       .then((response) => {
         setUserID(response.data._id);
@@ -30,7 +30,7 @@ function Builder() {
   };
 
   const initializeForce = async () => {
-    if (userID === '') return;
+    if (!userID) return;
     axios.get(`/api/forces/${userID}`)
       .then((response) => {
         setForce(response.data);
@@ -50,7 +50,13 @@ function Builder() {
     initializeForce();
   }, [userID]);
 
-  if (force === {}) {
+  const onUnitsChange = (units) => {
+    console.log('In Builder');
+    console.table(units);
+    // TODO integrate w/ database
+  };
+
+  if (!force) {
     return (
       <>
         <h1>Loading...</h1>
@@ -60,7 +66,10 @@ function Builder() {
 
   return (
     <Container>
-      <BuilderTable force={force} />
+      <BuilderTable
+        force={force}
+        onUnitsChange={onUnitsChange}
+      />
     </Container>
   );
 }
