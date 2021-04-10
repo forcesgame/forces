@@ -1,16 +1,26 @@
-/* eslint-disable no-underscore-dangle */
 const express = require('express');
 
 const router = express.Router();
 const Force = require('../models/Force');
-const Unit = require('../models/Unit');
+
+const database = require('./database');
 
 /**
- * Gets all Forces
+ * Gets all forces
  */
 router.get('/forces', async (req, res) => {
   try {
-    res.send(await Force.find());
+    const forces = await Force
+      .find()
+      .populate('user')
+      .populate('units');
+
+    if (forces.length === 0) {
+      res.status(204);
+      res.end();
+    } else {
+      res.send(forces);
+    }
   } catch (error) {
     res.status(400);
     res.send({
@@ -22,12 +32,21 @@ router.get('/forces', async (req, res) => {
 });
 
 /**
- * Gets a single Force associated with a user
+ * Gets a single force
  */
-router.get('/forces/:id', async (req, res) => {
+router.get('/forces/:userID', async (req, res) => {
   try {
-    const { id } = req.params;
-    res.send(await Force.findOne({ userID: id }));
+    const force = await Force
+      .findOne({ user: req.params.userID })
+      .populate('user')
+      .populate('units');
+
+    if (force === null) {
+      res.status(204);
+      res.end();
+    } else {
+      res.send(force);
+    }
   } catch (error) {
     res.status(400);
     res.send({
@@ -38,55 +57,22 @@ router.get('/forces/:id', async (req, res) => {
   }
 });
 
-function generateDefaultUnits() {
-  const defaultInfantryCount = 3;
-  const defaultBazookaCount = 3;
-  const defaultTankCount = 2;
-
-  const units = [];
-  let unit;
-
-  for (let i = 0; i < defaultInfantryCount; i += 1) {
-    unit = new Unit({ type: 'INFANTRY' });
-    unit.save();
-    units.push(unit._id);
-  }
-
-  for (let i = 0; i < defaultBazookaCount; i += 1) {
-    unit = new Unit({ type: 'BAZOOKA' });
-    unit.save();
-    units.push(unit._id);
-  }
-
-  for (let i = 0; i < defaultTankCount; i += 1) {
-    unit = new Unit({ type: 'TANK' });
-    unit.save();
-    units.push(unit._id);
-  }
-
-  return units;
-}
-
 /**
- * Adds a default Force to be associated with a user
- * Request body must contain JSON of the username of the user to add:
- * {
- *   username: <insert-username-here>
- * }
+ * Adds a starter force to a user's account
+ * TODO validate that userID corresponds to a valid user
  */
-router.post('/forces/:id', async (req, res) => {
+router.post('/forces/:userID', async (req, res) => {
   try {
-    // TODO validate that id corresponds to a valid user
-    const { id } = req.params;
-
     const force = new Force({
-      userID: id,
-      activeUnits: [],
-      inactiveUnits: generateDefaultUnits(),
+      user: req.params.userID,
+      units: database.generateDefaultUnits(),
     });
 
     await force.save();
-    res.send(await Force.findOne({ userID: id }));
+    res.send(await Force
+      .findOne({ user: req.params.userID })
+      .populate('user')
+      .populate('units'));
   } catch (error) {
     res.status(400);
     res.send({
@@ -99,37 +85,34 @@ router.post('/forces/:id', async (req, res) => {
 
 /**
  * Updates a Force associated with a user
- * Request body must contain JSON of the username, activeUnits, and inactiveUnits:
+ * Request body must contain the following fields:
  * {
- *   username: <insert-username here>,
- *   activeUnits: [
- *     id,
- *     id,
- *     ...
- *   ],
- *   inactiveUnits: [
+ *   units: [
  *     id,
  *     id,
  *     ...
  *   ]
  * }
  */
-router.patch('/forces/:id', async (req, res) => {
+router.patch('/forces/:userID', async (req, res) => {
   try {
-    const { id } = req.params;
-    const force = await Force.findOne({ userID: id });
+    const force = await Force.findOne({ user: req.params.userID });
 
-    if (req.body.activeUnits) {
-      force.activeUnits = req.body.activeUnits;
+    if (force === null) {
+      res.status(204);
+      res.end();
+    } else {
+      if (req.body.units) {
+        force.units = req.body.units;
+      }
+
+      await force.save();
+
+      res.send(await Force
+        .findOne({ user: req.params.userID })
+        .populate('user')
+        .populate('units'));
     }
-
-    if (req.body.inactiveUnits) {
-      force.inactiveUnits = req.body.inactiveUnits;
-    }
-
-    await force.save();
-
-    res.send(await Force.findOne({ userID: id }));
   } catch (error) {
     res.status(400);
     res.send({

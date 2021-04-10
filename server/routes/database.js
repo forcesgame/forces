@@ -1,19 +1,17 @@
-/* eslint-disable no-underscore-dangle */
 const express = require('express');
 
 const router = express.Router();
+
 const Force = require('../models/Force');
 const Unit = require('../models/Unit');
 const User = require('../models/User');
 
-module.exports = router;
-
 async function initializeUsers() {
   await User.deleteMany();
 
-  const ben = new User({ username: 'ben', __v: 0 });
-  const jesus = new User({ username: 'jesus', __v: 0 });
-  const patrick = new User({ username: 'patrick', __v: 0 });
+  const ben = new User({ username: 'ben' });
+  const jesus = new User({ username: 'jesus' });
+  const patrick = new User({ username: 'patrick' });
 
   await ben.save();
   await jesus.save();
@@ -29,19 +27,46 @@ function generateDefaultUnits() {
   let unit;
 
   for (let i = 0; i < defaultInfantryCount; i += 1) {
-    unit = new Unit({ type: 'INFANTRY' });
+    unit = new Unit({
+      type: 'INFANTRY',
+      health: 100,
+      maxHealth: 100,
+      maxStamina: 3,
+      rating: 1,
+      stamina: 3,
+      strongAgainst: ['BAZOOKA'],
+      weakAgainst: ['TANK'],
+    });
     unit.save();
     units.push(unit._id);
   }
 
   for (let i = 0; i < defaultBazookaCount; i += 1) {
-    unit = new Unit({ type: 'BAZOOKA' });
+    unit = new Unit({
+      type: 'BAZOOKA',
+      health: 125,
+      maxHealth: 125,
+      maxStamina: 2,
+      rating: 2,
+      stamina: 2,
+      strongAgainst: ['TANK'],
+      weakAgainst: ['INFANTRY'],
+    });
     unit.save();
     units.push(unit._id);
   }
 
   for (let i = 0; i < defaultTankCount; i += 1) {
-    unit = new Unit({ type: 'TANK' });
+    unit = new Unit({
+      type: 'TANK',
+      health: 200,
+      maxHealth: 200,
+      maxStamina: 1,
+      rating: 3,
+      stamina: 1,
+      strongAgainst: ['INFANTRY'],
+      weakAgainst: ['BAZOOKA'],
+    });
     unit.save();
     units.push(unit._id);
   }
@@ -55,26 +80,20 @@ async function initializeForces() {
 
   const benID = await User.findOne({ username: 'ben' }, { _id: 1 });
   const benForce = new Force({
-    userID: benID,
-    activeUnits: [],
-    inactiveUnits: generateDefaultUnits(),
-    __v: 0,
+    user: benID,
+    units: generateDefaultUnits(),
   });
 
   const jesusID = await User.findOne({ username: 'jesus' }, { _id: 1 });
   const jesusForce = new Force({
-    userID: jesusID,
-    activeUnits: [],
-    inactiveUnits: generateDefaultUnits(),
-    __v: 0,
+    user: jesusID,
+    units: generateDefaultUnits(),
   });
 
   const patrickID = await User.findOne({ username: 'patrick' }, { _id: 1 });
   const patrickForce = new Force({
-    userID: patrickID,
-    activeUnits: [],
-    inactiveUnits: generateDefaultUnits(),
-    __v: 0,
+    user: patrickID,
+    units: generateDefaultUnits(),
   });
 
   await benForce.save();
@@ -88,11 +107,16 @@ router.post('/database/initialize', async (req, res) => {
     await initializeForces();
 
     const users = await User.find();
-    const forces = await Force.find();
+    const forces = await Force
+      .find()
+      .populate('user')
+      .populate('units');
+    const units = await Unit.find();
 
     res.send({
       Users: users,
       Forces: forces,
+      Units: units,
     });
   } catch (error) {
     res.status(400);
@@ -103,3 +127,8 @@ router.post('/database/initialize', async (req, res) => {
     });
   }
 });
+
+module.exports = {
+  database: router,
+  generateDefaultUnits,
+};

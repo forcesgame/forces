@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 // include router modules
-const database = require('./routes/database');
+const { database } = require('./routes/database');
 const forces = require('./routes/forces');
 const units = require('./routes/units');
 const users = require('./routes/users');
