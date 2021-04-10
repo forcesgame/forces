@@ -1,11 +1,10 @@
 const express = require('express');
 
 const router = express.Router();
+
 const Force = require('../models/Force');
 const Unit = require('../models/Unit');
 const User = require('../models/User');
-
-module.exports = router;
 
 async function initializeUsers() {
   await User.deleteMany();
@@ -34,7 +33,7 @@ function generateDefaultUnits() {
       maxHealth: 100,
       maxStamina: 3,
       rating: 1,
-      stamina: 2,
+      stamina: 3,
       strongAgainst: ['BAZOOKA'],
       weakAgainst: ['TANK'],
     });
@@ -107,16 +106,17 @@ router.post('/database/initialize', async (req, res) => {
     await initializeUsers();
     await initializeForces();
 
-    const users = await User
-      .find();
+    const users = await User.find();
     const forces = await Force
       .find()
       .populate('user')
       .populate('units');
+    const units = await Unit.find();
 
     res.send({
       Users: users,
       Forces: forces,
+      Units: units,
     });
   } catch (error) {
     res.status(400);
@@ -127,3 +127,8 @@ router.post('/database/initialize', async (req, res) => {
     });
   }
 });
+
+module.exports = {
+  database: router,
+  generateDefaultUnits,
+};
