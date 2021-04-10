@@ -3,40 +3,82 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 
-function BuilderRow({ unit }) {
-  const [active, setActive] = useState(false);
+const BuilderRow = (props) => {
+  const { unit } = props;
 
-  useEffect(() => {
-    if (unit === null) return;
-    setActive(unit.active);
-  }, []);
+  const handleChange = () => {
+    props.onUnitChange(unit);
+  };
 
   return (
     <tr>
       <td>{unit.type}</td>
       <td>
-        {active
-          ? <Form.Check defaultChecked />
-          : <Form.Check />}
+        <Form.Check
+          checked={unit.active}
+          onChange={handleChange}
+        />
       </td>
       <td>{unit.rating}</td>
     </tr>
   );
-}
+};
 
 function BuilderTable({ force }) {
-  const { units } = force;
-  let builderRows = [];
+  const [units, setUnits] = useState([]);
+  const [builderRows, setBuilderRows] = useState([]);
 
-  if (units) {
-    builderRows = units.map((unit) => <BuilderRow key={unit._id} unit={unit} />);
-  }
+  const initializeUnits = async () => {
+    if (!force) return;
+    setUnits(force.units);
+  };
+
+  const onUnitChange = (unit) => {
+    const updatedUnits = units.map((_unit) => {
+      const tempUnit = { ..._unit };
+      if (tempUnit._id === unit._id) {
+        tempUnit.active = !unit.active;
+      }
+      return tempUnit;
+    });
+
+    setUnits(updatedUnits);
+  };
+
+  const initializeBuilderRows = async () => {
+    if (!units) return;
+    setBuilderRows(
+      units.map((unit) => (
+        <BuilderRow
+          key={unit._id}
+          unit={unit}
+          onUnitChange={onUnitChange}
+        />
+      )),
+    );
+  };
+
+  useEffect(() => {
+    initializeUnits();
+  }, [force]);
+
+  useEffect(() => {
+    initializeBuilderRows();
+    console.table(units);
+  }, [units]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = document.forms.forceUpdate;
+    console.log(form);
     // TODO
   };
+
+  if (!units) {
+    return (
+      <h1>Loading...</h1>
+    );
+  }
 
   return (
     <Form name="forceUpdate" onSubmit={handleSubmit}>
@@ -52,7 +94,10 @@ function BuilderTable({ force }) {
           {builderRows}
         </tbody>
       </Table>
-      <Button variant="primary" type="submit">
+      <Button
+        type="submit"
+        variant="primary"
+      >
         Save
       </Button>
     </Form>
