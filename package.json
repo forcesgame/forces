@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "node server",
-    "devStart": "nodemon --watch server server",
+    "devStart": "nodemon --trace-deprecation --watch server server",
     "build": "cd client/ && npm install && npm run build"
   },
   "cacheDirectories": [

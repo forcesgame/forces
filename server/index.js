@@ -30,11 +30,12 @@ app.get('*', (req, res) => {
 });
 
 // connect to MongoDB
+mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
 mongoose
   .connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     app.listen(5000, () => {
-      // eslint-disable-next-line no-console
       console.log('API server listening on port 5000...');
     });
   });
