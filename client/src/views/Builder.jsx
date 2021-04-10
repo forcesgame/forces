@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import axios from 'axios';
 
+import Container from 'react-bootstrap/Container';
 import BuilderTable from '../components/builder/BuilderTable';
 
 function Builder() {
@@ -58,7 +59,9 @@ function Builder() {
   }
 
   return (
-    <BuilderTable force={force} />
+    <Container>
+      <BuilderTable force={force} />
+    </Container>
   );
 }
 

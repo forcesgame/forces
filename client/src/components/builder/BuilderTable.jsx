@@ -1,4 +1,5 @@
 import React from 'react';
+import Table from 'react-bootstrap/Table';
 
 const BuilderRow = ({ unit }) => (
   <tr>
@@ -16,7 +17,7 @@ const BuilderTable = ({ force }) => {
   }
 
   return (
-    <table>
+    <Table>
       <thead>
         <tr>
           <th>Type</th>
@@ -26,7 +27,7 @@ const BuilderTable = ({ force }) => {
       <tbody>
         {builderRows}
       </tbody>
-    </table>
+    </Table>
   );
 };
 
