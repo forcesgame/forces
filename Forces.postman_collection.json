@@ -59,13 +59,13 @@
 			"response": []
 		},
 		{
-			"name": "POST /api/users",
+			"name": "POST /api/users/example-user",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"example-user\"\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -73,7 +73,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5000/api/users",
+					"raw": "http://localhost:5000/api/users/example-user",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -81,7 +81,8 @@
 					"port": "5000",
 					"path": [
 						"api",
-						"users"
+						"users",
+						"example-user"
 					]
 				}
 			},
