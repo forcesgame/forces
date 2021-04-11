@@ -20,6 +20,17 @@ export default function Home() {
     setUsername(user[usernameKey]);
   };
 
+  const generateStarterForce = async () => {
+    axios.get(`/api/forces/${userID}`)
+      .then((getResponse) => {
+        if (getResponse.status === 204) {
+          axios.post(`/api/forces/${userID}`)
+            .catch((error) => console.error(error.message));
+        }
+      })
+      .catch((error) => console.error(error.message));
+  };
+
   const addUserToDatabase = async () => {
     if (userID) return;
     axios.get(`/api/users/${username}`)
@@ -58,6 +69,7 @@ export default function Home() {
 
   useEffect(() => {
     addUserToDatabase();
+    generateStarterForce();
   }, [userID]);
 
   if (user) {
