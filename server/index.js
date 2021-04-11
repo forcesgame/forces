@@ -6,6 +6,7 @@ const path = require('path');
 // include router modules
 const { database } = require('./routes/database');
 const forces = require('./routes/forces');
+const tiles = require('./routes/tiles');
 const units = require('./routes/units');
 const users = require('./routes/users');
 
@@ -21,6 +22,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 // mount router modules
 app.use('/api', database);
 app.use('/api', forces);
+app.use('/api', tiles);
 app.use('/api', units);
 app.use('/api', users);
 

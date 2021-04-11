@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const Force = require('../models/Force');
+const Tile = require('../models/Tile');
 const Unit = require('../models/Unit');
 const User = require('../models/User');
 
@@ -92,10 +93,23 @@ async function initializeForces() {
   await jesusForce.save();
 }
 
+async function initializeTiles() {
+  await Tile.deleteMany();
+
+  const tile = new Tile({
+    staminaCost: 1,
+    type: 'PLAINS',
+    unit: null,
+  });
+
+  await tile.save();
+}
+
 router.post('/database/initialize', async (req, res) => {
   try {
     await initializeUsers();
     await initializeForces();
+    await initializeTiles();
 
     const users = await User.find();
     const forces = await Force
@@ -103,11 +117,13 @@ router.post('/database/initialize', async (req, res) => {
       .populate('user')
       .populate('units');
     const units = await Unit.find();
+    const tiles = await Tile.find();
 
     res.send({
       Users: users,
       Forces: forces,
       Units: units,
+      Tiles: tiles,
     });
   } catch (error) {
     res.status(400);
