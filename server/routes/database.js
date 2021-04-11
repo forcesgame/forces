@@ -11,11 +11,9 @@ async function initializeUsers() {
 
   const ben = new User({ username: 'ben' });
   const jesus = new User({ username: 'jesus' });
-  const patrick = new User({ username: 'patrick' });
 
   await ben.save();
   await jesus.save();
-  await patrick.save();
 }
 
 function generateDefaultUnits() {
@@ -90,15 +88,8 @@ async function initializeForces() {
     units: generateDefaultUnits(),
   });
 
-  const patrickID = await User.findOne({ username: 'patrick' }, { _id: 1 });
-  const patrickForce = new Force({
-    user: patrickID,
-    units: generateDefaultUnits(),
-  });
-
   await benForce.save();
   await jesusForce.save();
-  await patrickForce.save();
 }
 
 router.post('/database/initialize', async (req, res) => {
