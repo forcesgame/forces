@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -7,9 +7,58 @@ import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Row from 'react-bootstrap/Row';
+import axios from 'axios';
 
 export default function Home() {
   const { user } = useAuth0();
+  const [username, setUsername] = useState('');
+  const [userID, setUserID] = useState('');
+
+  const initializeUsername = async () => {
+    if (!user) return;
+    const usernameKey = `${process.env.REACT_APP_AUTH0_NAMESPACE}username`;
+    setUsername(user[usernameKey]);
+  };
+
+  const addUserToDatabase = async () => {
+    if (userID) return;
+    axios.get(`/api/users/${username}`)
+      .then((getResponse) => {
+        if (getResponse.status === 204) {
+          axios.post(`/api/users/${username}`)
+            .then((postResponse) => {
+              setUserID(postResponse.data._id);
+            })
+            .catch((error) => console.error(error.message));
+        }
+      })
+      .catch((error) => console.error(error.message));
+  };
+
+  const initializeUserID = async () => {
+    if (!username) return;
+    axios.get(`/api/users/${username}`)
+      .then(async (response) => {
+        if (response.status === 204) {
+          await addUserToDatabase();
+        } else {
+          setUserID(response.data._id);
+        }
+      })
+      .catch((error) => console.error(error.message));
+  };
+
+  useEffect(() => {
+    initializeUsername();
+  }, [user]);
+
+  useEffect(() => {
+    initializeUserID();
+  }, [username]);
+
+  useEffect(() => {
+    addUserToDatabase();
+  }, [userID]);
 
   if (user) {
     return (
