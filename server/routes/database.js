@@ -177,10 +177,21 @@ async function initializeMatches() {
     }
   });
 
+  const defaultRowWidth = 8;
   const defaultColumnHeight = 8;
   const rows = [];
+
   // top row: force1
-  // TODO add patrickActiveUnits
+  const patrickActiveUnitCount = patrickActiveUnits.length;
+  let row = [];
+  for (let i = 0; i < patrickActiveUnitCount; i += 1) {
+    const tile = generateDefaultTile(patrickActiveUnits.pop());
+    row.push(tile._id);
+  }
+  for (let i = 0; i < defaultRowWidth - patrickActiveUnitCount; i += 1) {
+    row.push(generateDefaultTile(null)._id);
+  }
+  rows.push(row);
 
   // middle rows: no units
   for (let i = 1; i < defaultColumnHeight - 1; i += 1) {
@@ -188,7 +199,16 @@ async function initializeMatches() {
   }
 
   // bottom row: force2
-  // TODO add otherPatrickActiveUnits
+  const otherPatrickActiveUnitCount = otherPatrickActiveUnits.length;
+  row = [];
+  for (let i = 0; i < otherPatrickActiveUnitCount; i += 1) {
+    const tile = generateDefaultTile(otherPatrickActiveUnits.pop());
+    row.push(tile._id);
+  }
+  for (let i = 0; i < defaultRowWidth - otherPatrickActiveUnitCount; i += 1) {
+    row.push(generateDefaultTile(null)._id);
+  }
+  rows.push(row);
 
   const map = new Map({
     tiles: rows,
