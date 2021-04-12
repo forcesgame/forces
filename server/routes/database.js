@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const Force = require('../models/Force');
+const Map = require('../models/Map');
 const Tile = require('../models/Tile');
 const Unit = require('../models/Unit');
 const User = require('../models/User');
@@ -36,6 +37,7 @@ function generateDefaultUnits() {
       strongAgainst: ['BAZOOKA'],
       weakAgainst: ['TANK'],
     });
+
     unit.save();
     units.push(unit._id);
   }
@@ -51,6 +53,7 @@ function generateDefaultUnits() {
       strongAgainst: ['TANK'],
       weakAgainst: ['INFANTRY'],
     });
+
     unit.save();
     units.push(unit._id);
   }
@@ -66,6 +69,7 @@ function generateDefaultUnits() {
       strongAgainst: ['INFANTRY'],
       weakAgainst: ['BAZOOKA'],
     });
+
     unit.save();
     units.push(unit._id);
   }
@@ -93,37 +97,72 @@ async function initializeForces() {
   await jesusForce.save();
 }
 
-async function initializeTiles() {
-  await Tile.deleteMany();
+function generateTileRow() {
+  const defaultRowWidth = 8;
+  const types = ['PLAINS', 'ROAD', 'FOREST', 'MOUNTAINS'];
+  const staminaCosts = [1, 0.5, 2, -1];
 
-  const tile = new Tile({
-    staminaCost: 1,
-    type: 'PLAINS',
-    unit: null,
+  const row = [];
+  let tile;
+
+  for (let i = 0; i < defaultRowWidth; i += 1) {
+    const randomIndex = Math.floor(Math.random() * types.length);
+    tile = new Tile({
+      staminaCost: staminaCosts[randomIndex],
+      type: types[randomIndex],
+      unit: null,
+    });
+
+    tile.save();
+    row.push(tile._id);
+  }
+
+  return row;
+}
+
+async function initializeMaps() {
+  await Map.deleteMany();
+
+  const defaultColumnHeight = 8;
+  const rows = [];
+
+  for (let i = 0; i < defaultColumnHeight; i += 1) {
+    rows.push(generateTileRow());
+  }
+
+  const map = new Map({
+    tiles: rows,
   });
 
-  await tile.save();
+  await map.save();
 }
 
 router.post('/database/initialize', async (req, res) => {
   try {
     await initializeUsers();
     await initializeForces();
-    await initializeTiles();
+    await initializeMaps();
 
     const users = await User.find();
-    const forces = await Force
-      .find()
+    const forces = await Force.find()
       .populate('user')
       .populate('units');
     const units = await Unit.find();
-    const tiles = await Tile.find();
+    const maps = await Map.find()
+      .populate('tiles.0')
+      .populate('tiles.1')
+      .populate('tiles.2')
+      .populate('tiles.3')
+      .populate('tiles.4')
+      .populate('tiles.5')
+      .populate('tiles.6')
+      .populate('tiles.7');
 
     res.send({
       Users: users,
       Forces: forces,
       Units: units,
-      Tiles: tiles,
+      Maps: maps,
     });
   } catch (error) {
     res.status(400);
