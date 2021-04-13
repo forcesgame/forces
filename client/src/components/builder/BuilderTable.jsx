@@ -22,13 +22,13 @@ const BuilderRow = ({ unit, onUnitChange }) => {
   );
 };
 
-function BuilderTable({ force, onUnitsChange }) {
+function BuilderTable({ initialUnits, onUnitsChange }) {
   const [units, setUnits] = useState([]);
   const [builderRows, setBuilderRows] = useState([]);
 
   const initializeUnits = async () => {
-    if (!force) return;
-    setUnits(force.units);
+    if (!initialUnits) return;
+    setUnits(initialUnits);
   };
 
   const onUnitChange = (unit) => {
@@ -37,6 +37,7 @@ function BuilderTable({ force, onUnitsChange }) {
       if (tempUnit._id === unit._id) {
         tempUnit.active = !unit.active;
       }
+
       return tempUnit;
     });
 
@@ -58,7 +59,7 @@ function BuilderTable({ force, onUnitsChange }) {
 
   useEffect(() => {
     initializeUnits();
-  }, [force]);
+  }, [initialUnits]);
 
   useEffect(() => {
     initializeBuilderRows();
@@ -76,7 +77,7 @@ function BuilderTable({ force, onUnitsChange }) {
   }
 
   return (
-    <Form name="forceUpdate" onSubmit={handleSubmit}>
+    <Form name="unitUpdate" onSubmit={handleSubmit}>
       <Table>
         <thead>
           <tr>

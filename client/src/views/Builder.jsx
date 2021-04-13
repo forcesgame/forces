@@ -9,7 +9,7 @@ function Builder() {
   const { user } = useAuth0();
   const [username, setUsername] = useState('');
   const [userID, setUserID] = useState('');
-  const [force, setForce] = useState({});
+  const [units, setUnits] = useState([]);
 
   const initializeUsername = async () => {
     try {
@@ -29,11 +29,11 @@ function Builder() {
       .catch((error) => console.error(error.message));
   };
 
-  const initializeForce = async () => {
+  const initializeUnits = async () => {
     if (!userID) return;
-    axios.get(`/api/forces/${userID}`)
+    axios.get(`/api/units/users/${userID}`)
       .then((response) => {
-        setForce(response.data);
+        setUnits(response.data);
       })
       .catch((error) => console.error(error.message));
   };
@@ -47,17 +47,19 @@ function Builder() {
   }, [username]);
 
   useEffect(() => {
-    initializeForce();
+    initializeUnits();
   }, [userID]);
 
-  const onUnitsChange = async (units) => {
+  const onUnitsChange = async (changedUnits) => {
     if (!userID) return;
-    axios.patch(`/api/forces/${userID}`, { units })
-      .then(window.alert('Force saved!'))
-      .catch((error) => console.error(error.message));
+    changedUnits.forEach((changedUnit) => {
+      axios.patch(`/api/units/${changedUnit._id}`, changedUnit)
+        .catch((error) => console.error(error.message));
+    });
+    window.alert('Force saved!');
   };
 
-  if (!force) {
+  if (units.length === 0) {
     return (
       <>
         <h1>Loading...</h1>
@@ -68,7 +70,7 @@ function Builder() {
   return (
     <Container>
       <BuilderTable
-        force={force}
+        initialUnits={units}
         onUnitsChange={onUnitsChange}
       />
     </Container>
@@ -76,5 +78,5 @@ function Builder() {
 }
 
 export default withAuthenticationRequired(Builder, {
-  onRedirecting: () => <h1>Loading</h1>,
+  onRedirecting: () => <h1>Loading...</h1>,
 });
