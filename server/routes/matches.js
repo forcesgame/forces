@@ -52,4 +52,31 @@ router.get('/matches/:id', async (req, res) => {
     });
   }
 });
+
+/**
+ * Gets all matches associated with a user
+ */
+router.get('/matches/users/:userID', async (req, res) => {
+  try {
+    const matches = await Match.find({
+      $or: [
+        { user1: req.params.userID }, { user2: req.params.userID }],
+    });
+
+    if (matches.length === 0) {
+      res.status(204);
+      res.end();
+    } else {
+      res.send(matches);
+    }
+  } catch (error) {
+    res.status(400);
+    res.send({
+      type: 'https://forcesgame.com/probs/unspecified-problem',
+      title: 'Unspecified problem',
+      error,
+    });
+  }
+});
+
 module.exports = router;
