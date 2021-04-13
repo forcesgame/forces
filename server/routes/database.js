@@ -3,6 +3,8 @@ const express = require('express');
 
 const router = express.Router();
 
+const Match = require('../models/Match');
+const Tile = require('../models/Tile');
 const Unit = require('../models/Unit');
 const User = require('../models/User');
 
@@ -98,18 +100,75 @@ async function initializeUnits() {
   await generateDefaultUnits(otherPatrick);
 }
 
+async function generateRandomTile(unit) {
+  const types = ['PLAINS', 'ROAD', 'FOREST'];
+  const staminaCosts = [1, 0.5, 2];
+  const randomIndex = Math.floor(Math.random() * types.length);
+
+  const tile = new Tile({
+    staminaCost: staminaCosts[randomIndex],
+    type: types[randomIndex],
+    unit,
+  });
+
+  await tile.save();
+  return tile;
+}
+
+async function generateTileRow() {
+  const defaultRowWidth = 8;
+  const row = [];
+
+  for (let i = 0; i < defaultRowWidth; i += 1) {
+    const tile = await generateRandomTile(null);
+    row.push(tile._id);
+  }
+
+  return row;
+}
+
+async function initializeMatches() {
+  const defaultColumnHeight = 8;
+
+  await Match.deleteMany();
+
+  const patrick = await User.findOne({ username: 'patrick' });
+  const otherPatrick = await User.findOne({ username: 'otherPatrick' });
+  const map = [];
+
+  // TODO add active units to map
+
+  for (let i = 0; i < defaultColumnHeight; i += 1) {
+    map.push(await generateTileRow());
+  }
+
+  const match = new Match({
+    currentTurn: patrick,
+    user1: patrick,
+    user2: otherPatrick,
+    inProgress: true,
+    map,
+    winner: null,
+  });
+
+  await match.save();
+}
+
 router.post('/database/initialize', async (req, res) => {
   try {
     await initializeUsers();
     await initializeUnits();
+    await initializeMatches();
 
     const users = await User.find();
     const units = await Unit.find()
       .populate('user');
+    const matches = await Match.find();
 
     res.send({
       Users: users,
       Units: units,
+      Matches: matches,
     });
   } catch (error) {
     res.status(400);
