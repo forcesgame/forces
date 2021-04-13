@@ -136,13 +136,13 @@ async function initializeMatches() {
   const otherPatrick = await User.findOne({ username: 'otherPatrick' });
   const patrickActiveUnits = await Unit.find({ user: patrick, active: true });
   const otherPatrickActiveUnits = await Unit.find({ user: otherPatrick, active: true });
-  const map = [];
+  const tiles = [];
 
   for (let i = 0; i < defaultColumnHeight; i += 1) {
-    map.push(await generateTileRow());
+    tiles.push(await generateTileRow());
   }
 
-  const topRow = map[0];
+  const topRow = tiles[0];
   for (let i = 0; i < patrickActiveUnits.length; i += 1) {
     const tileID = topRow[i];
     const tile = await Tile.findById(tileID);
@@ -150,7 +150,7 @@ async function initializeMatches() {
     await tile.save();
   }
 
-  const bottomRow = map[7];
+  const bottomRow = tiles[7];
   for (let i = 0; i < otherPatrickActiveUnits.length; i += 1) {
     const tileID = bottomRow[i];
     const tile = await Tile.findById(tileID);
@@ -163,7 +163,7 @@ async function initializeMatches() {
     user1: patrick,
     user2: otherPatrick,
     inProgress: true,
-    map,
+    tiles,
     winner: null,
   });
 

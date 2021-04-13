@@ -5,7 +5,7 @@ const matchSchema = Schema({
   user1: { type: Schema.Types.ObjectId, ref: 'User' },
   user2: { type: Schema.Types.ObjectId, ref: 'User' },
   inProgress: Boolean,
-  map: [[{ type: Schema.Types.ObjectId, ref: 'Tile' }]],
+  tiles: [[{ type: Schema.Types.ObjectId, ref: 'Tile' }]],
   winner: { type: Schema.Types.ObjectId, ref: 'User' },
 });
 
@@ -16,7 +16,7 @@ function populateMatch() {
   this.populate('user1');
   this.populate('user2');
   for (let i = 0; i < defaultColumnHeight; i += 1) {
-    this.populate(`map.${i}`);
+    this.populate(`tiles.${i}`);
   }
   this.populate('winner');
 }
