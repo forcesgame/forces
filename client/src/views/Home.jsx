@@ -21,10 +21,10 @@ export default function Home() {
   };
 
   const generateStarterForce = async () => {
-    axios.get(`/api/forces/${userID}`)
+    axios.get(`/api/units/users/${userID}`)
       .then((getResponse) => {
         if (getResponse.status === 204) {
-          axios.post(`/api/forces/${userID}`)
+          axios.post(`/api/units/users/${userID}`)
             .catch((error) => console.error(error.message));
         }
       })
