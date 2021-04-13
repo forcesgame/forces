@@ -10,6 +10,7 @@ import NavBar from './components/NavBar';
 import Builder from './views/Builder';
 import Error from './views/Error';
 import Home from './views/Home';
+import Match from './views/Match';
 import NotFound from './views/NotFound';
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
       <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/builder" component={Builder} />
+        <Route path="/match" component={Match} />
         <Route path="/error" component={Error} />
         <Route component={NotFound} />
       </Switch>
