@@ -42,6 +42,7 @@ const unitSchema = Schema({
     type: String,
     enum: ['BAZOOKA', 'INFANTRY', 'TANK'],
   },
+  user: { type: Schema.Types.ObjectId, ref: 'User' },
   weakAgainst: {
     type: [String],
   },
