@@ -134,12 +134,28 @@ async function initializeMatches() {
 
   const patrick = await User.findOne({ username: 'patrick' });
   const otherPatrick = await User.findOne({ username: 'otherPatrick' });
+  const patrickActiveUnits = await Unit.find({ user: patrick, active: true });
+  const otherPatrickActiveUnits = await Unit.find({ user: otherPatrick, active: true });
   const map = [];
-
-  // TODO add active units to map
 
   for (let i = 0; i < defaultColumnHeight; i += 1) {
     map.push(await generateTileRow());
+  }
+
+  const topRow = map[0];
+  for (let i = 0; i < patrickActiveUnits.length; i += 1) {
+    const tileID = topRow[i];
+    const tile = await Tile.findById(tileID);
+    tile.unit = patrickActiveUnits[i];
+    await tile.save();
+  }
+
+  const bottomRow = map[7];
+  for (let i = 0; i < otherPatrickActiveUnits.length; i += 1) {
+    const tileID = bottomRow[i];
+    const tile = await Tile.findById(tileID);
+    tile.unit = otherPatrickActiveUnits[i];
+    await tile.save();
   }
 
   const match = new Match({
