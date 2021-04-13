@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 const express = require('express');
 
 const router = express.Router();
@@ -19,7 +20,7 @@ async function initializeUsers() {
   await otherPatrick.save();
 }
 
-function generateDefaultUnits(user) {
+async function generateDefaultUnits(user) {
   const defaultInfantryCount = 3;
   const defaultBazookaCount = 3;
   const defaultTankCount = 2;
@@ -40,7 +41,7 @@ function generateDefaultUnits(user) {
       weakAgainst: ['TANK'],
     });
 
-    unit.save();
+    await unit.save();
     units.push(unit._id);
   }
 
@@ -58,7 +59,7 @@ function generateDefaultUnits(user) {
       weakAgainst: ['INFANTRY'],
     });
 
-    unit.save();
+    await unit.save();
     units.push(unit._id);
   }
 
@@ -76,7 +77,7 @@ function generateDefaultUnits(user) {
       weakAgainst: ['BAZOOKA'],
     });
 
-    unit.save();
+    await unit.save();
     units.push(unit._id);
   }
 
@@ -86,15 +87,15 @@ function generateDefaultUnits(user) {
 async function initializeUnits() {
   await Unit.deleteMany();
 
-  // const ben = await User.findOne({ username: 'ben' });
+  const ben = await User.findOne({ username: 'ben' });
   const jesus = await User.findOne({ username: 'jesus' });
   const patrick = await User.findOne({ username: 'patrick' });
   const otherPatrick = await User.findOne({ username: 'otherPatrick' });
 
-  // generateDefaultUnits(ben);
-  generateDefaultUnits(jesus);
-  generateDefaultUnits(patrick);
-  generateDefaultUnits(otherPatrick);
+  await generateDefaultUnits(ben);
+  await generateDefaultUnits(jesus);
+  await generateDefaultUnits(patrick);
+  await generateDefaultUnits(otherPatrick);
 }
 
 router.post('/database/initialize', async (req, res) => {
