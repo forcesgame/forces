@@ -161,8 +161,7 @@ router.post('/database/initialize', async (req, res) => {
     await initializeMatches();
 
     const users = await User.find();
-    const units = await Unit.find()
-      .populate('user');
+    const units = await Unit.find();
     const matches = await Match.find();
 
     res.send({

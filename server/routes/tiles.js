@@ -9,9 +9,7 @@ const Tile = require('../models/Tile');
  */
 router.get('/tiles', async (req, res) => {
   try {
-    const tiles = await Tile
-      .find()
-      .populate('unit');
+    const tiles = await Tile.find();
 
     if (!tiles || tiles.length === 0) {
       res.status(204);
@@ -34,15 +32,16 @@ router.get('/tiles', async (req, res) => {
  */
 router.get('/tiles/:id', async (req, res) => {
   try {
-    const tile = await Tile
-      .findById(req.params.id)
-      .populate('unit');
+    /*
+    we use findOne over findById as query middleware (necessary for pre hook
+    population (see Tile.js)) is unsupported for findById
+     */
+    const tile = await Tile.findOne({ _id: req.params.id });
 
     if (!tile) {
       res.status(204);
       res.end();
     } else {
-      console.log(tile);
       res.send(tile);
     }
   } catch (error) {
@@ -87,9 +86,11 @@ router.post('/tiles', async (req, res) => {
 
     await tile.save();
 
-    res.send(await Tile
-      .findById(tile._id)
-      .populate('unit'));
+    /*
+    we use findOne over findById as query middleware (necessary for pre hook
+    population (see Tile.js)) is unsupported for findById
+     */
+    res.send(await Tile.findOne({ _id: tile._id }));
   } catch (error) {
     res.status(400);
     res.send({
@@ -127,9 +128,11 @@ router.patch('/tiles/:id', async (req, res) => {
 
     await tile.save();
 
-    res.send(await Tile
-      .findById(tile._id)
-      .populate('unit'));
+    /*
+    we use findOne over findById as query middleware (necessary for pre hook
+    population (see Tile.js)) is unsupported for findById
+     */
+    res.send(await Tile.findOne({ _id: tile._id }));
   } catch (error) {
     res.status(400);
     res.send({
