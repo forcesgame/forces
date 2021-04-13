@@ -58,7 +58,7 @@ router.get('/matches/:id', async (req, res) => {
  */
 router.get('/matches/users/:userID', async (req, res) => {
   try {
-    const matches = await Match.find({
+    const matches = await Match.findOne({
       $or: [
         { user1: req.params.userID }, { user2: req.params.userID }],
     });
