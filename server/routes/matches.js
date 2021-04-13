@@ -8,21 +8,7 @@ const Match = require('../models/Match');
  */
 router.get('/matches', async (req, res) => {
   try {
-    const matches = await Match.find()
-      .populate('currentTurn')
-      .populate({ path: 'force1', populate: { path: 'user' } })
-      .populate({ path: 'force1', populate: { path: 'units' } })
-      .populate({ path: 'force2', populate: { path: 'user' } })
-      .populate({ path: 'force2', populate: { path: 'units' } })
-      .populate({ path: 'map', populate: { path: 'tiles.0' } })
-      .populate({ path: 'map', populate: { path: 'tiles.1' } })
-      .populate({ path: 'map', populate: { path: 'tiles.2' } })
-      .populate({ path: 'map', populate: { path: 'tiles.3' } })
-      .populate({ path: 'map', populate: { path: 'tiles.4' } })
-      .populate({ path: 'map', populate: { path: 'tiles.5' } })
-      .populate({ path: 'map', populate: { path: 'tiles.6' } })
-      .populate({ path: 'map', populate: { path: 'tiles.7' } })
-      .populate({ path: 'winner', populate: { path: 'user' } });
+    const matches = await Match.find();
 
     if (!matches || matches.length === 0) {
       res.status(204);
@@ -41,25 +27,15 @@ router.get('/matches', async (req, res) => {
 });
 
 /**
- * Gets a single matche
+ * Gets a single match
  */
 router.get('/matches/:id', async (req, res) => {
   try {
-    const match = await Match.findById(req.params.id)
-      .populate('currentTurn')
-      .populate({ path: 'force1', populate: { path: 'user' } })
-      .populate({ path: 'force1', populate: { path: 'units' } })
-      .populate({ path: 'force2', populate: { path: 'user' } })
-      .populate({ path: 'force2', populate: { path: 'units' } })
-      .populate({ path: 'map', populate: { path: 'tiles.0' } })
-      .populate({ path: 'map', populate: { path: 'tiles.1' } })
-      .populate({ path: 'map', populate: { path: 'tiles.2' } })
-      .populate({ path: 'map', populate: { path: 'tiles.3' } })
-      .populate({ path: 'map', populate: { path: 'tiles.4' } })
-      .populate({ path: 'map', populate: { path: 'tiles.5' } })
-      .populate({ path: 'map', populate: { path: 'tiles.6' } })
-      .populate({ path: 'map', populate: { path: 'tiles.7' } })
-      .populate({ path: 'winner', populate: { path: 'user' } });
+    /*
+    we use findOne over findById as query middleware (necessary for pre hook
+    population (see Match.js)) is unsupported for findById
+     */
+    const match = await Match.findOne({ _id: req.params.id });
 
     if (!match) {
       res.status(204);

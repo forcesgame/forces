@@ -48,4 +48,11 @@ const unitSchema = Schema({
   },
 });
 
+function populateUnit() {
+  this.populate('user');
+}
+
+unitSchema.pre('find', populateUnit);
+unitSchema.pre('findOne', populateUnit);
+
 module.exports = model('Unit', unitSchema);

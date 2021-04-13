@@ -9,8 +9,7 @@ const Utilities = require('./database');
  */
 router.get('/units', async (req, res) => {
   try {
-    const units = await Unit.find()
-      .populate('user');
+    const units = await Unit.find();
 
     if (units.length === 0) {
       res.status(204);
@@ -33,6 +32,10 @@ router.get('/units', async (req, res) => {
  */
 router.get('/units/:id', async (req, res) => {
   try {
+    /*
+    we use findOne over findById as query middleware (necessary for pre hook
+    population (see Unit.js)) is unsupported for findById
+     */
     const unit = await Unit.findOne({ _id: req.params.id })
       .populate('user');
 
@@ -57,8 +60,7 @@ router.get('/units/:id', async (req, res) => {
  */
 router.get('/units/users/:userID', async (req, res) => {
   try {
-    const units = await Unit.find({ user: req.params.userID })
-      .populate('user');
+    const units = await Unit.find({ user: req.params.userID });
 
     if (units.length === 0) {
       res.status(204);
@@ -82,8 +84,7 @@ router.get('/units/users/:userID', async (req, res) => {
 router.post('/units/users/:userID', async (req, res) => {
   try {
     await Utilities.generateDefaultUnits(req.params.userID);
-    const units = await Unit.find({ user: req.params.userID })
-      .populate('user');
+    const units = await Unit.find({ user: req.params.userID });
 
     res.send(units);
   } catch (error) {
