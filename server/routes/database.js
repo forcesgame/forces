@@ -14,12 +14,12 @@ async function initializeUsers() {
   const ben = new User({ username: 'ben' });
   const jesus = new User({ username: 'jesus' });
   const patrick = new User({ username: 'patrick' });
-  const otherPatrick = new User({ username: 'otherPatrick' });
+  const otherpatrick = new User({ username: 'otherpatrick' });
 
   await ben.save();
   await jesus.save();
   await patrick.save();
-  await otherPatrick.save();
+  await otherpatrick.save();
 }
 
 async function generateDefaultUnits(user) {
@@ -92,12 +92,12 @@ async function initializeUnits() {
   const ben = await User.findOne({ username: 'ben' });
   const jesus = await User.findOne({ username: 'jesus' });
   const patrick = await User.findOne({ username: 'patrick' });
-  const otherPatrick = await User.findOne({ username: 'otherPatrick' });
+  const otherpatrick = await User.findOne({ username: 'otherpatrick' });
 
   await generateDefaultUnits(ben);
   await generateDefaultUnits(jesus);
   await generateDefaultUnits(patrick);
-  await generateDefaultUnits(otherPatrick);
+  await generateDefaultUnits(otherpatrick);
 }
 
 async function generateRandomTile(unit) {
@@ -133,9 +133,9 @@ async function initializeMatches() {
   await Match.deleteMany();
 
   const patrick = await User.findOne({ username: 'patrick' });
-  const otherPatrick = await User.findOne({ username: 'otherPatrick' });
+  const otherpatrick = await User.findOne({ username: 'otherpatrick' });
   const patrickActiveUnits = await Unit.find({ user: patrick, active: true });
-  const otherPatrickActiveUnits = await Unit.find({ user: otherPatrick, active: true });
+  const otherpatrickActiveUnits = await Unit.find({ user: otherpatrick, active: true });
   const tiles = [];
 
   for (let i = 0; i < defaultColumnHeight; i += 1) {
@@ -151,17 +151,17 @@ async function initializeMatches() {
   }
 
   const bottomRow = tiles[7];
-  for (let i = 0; i < otherPatrickActiveUnits.length; i += 1) {
+  for (let i = 0; i < otherpatrickActiveUnits.length; i += 1) {
     const tileID = bottomRow[i];
     const tile = await Tile.findById(tileID);
-    tile.unit = otherPatrickActiveUnits[i];
+    tile.unit = otherpatrickActiveUnits[i];
     await tile.save();
   }
 
   const match = new Match({
     currentTurn: patrick,
     user1: patrick,
-    user2: otherPatrick,
+    user2: otherpatrick,
     inProgress: true,
     tiles,
     winner: null,
