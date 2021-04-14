@@ -1,76 +1,64 @@
-import React, { useEffect, useState } from 'react';
-
 import { useAuth0 } from '@auth0/auth0-react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Row from 'react-bootstrap/Row';
-import axios from 'axios';
 
 export default function Home() {
-  const { user } = useAuth0();
-  const [username, setUsername] = useState('');
-  const [userID, setUserID] = useState('');
+  const auth0User = useAuth0().user;
+  const [auth0Username, setAuth0Username] = useState('');
 
   const initializeUsername = async () => {
-    if (!user) return;
+    if (!auth0User) return;
     const usernameKey = `${process.env.REACT_APP_AUTH0_NAMESPACE}username`;
-    setUsername(user[usernameKey]);
+    setAuth0Username(auth0User[usernameKey]);
   };
 
-  const generateStarterForce = async () => {
-    axios.get(`/api/units/users/${userID}`)
-      .then((getResponse) => {
-        if (getResponse.status === 204) {
-          axios.post(`/api/units/users/${userID}`)
-            .catch((error) => console.error(error.message));
-        }
-      })
-      .catch((error) => console.error(error.message));
-  };
+  const {
+    isLoading, isError, data: user, error,
+  } = useQuery(['users', auth0Username], async () => {
+    if (!auth0Username) return;
+    let response = await axios.get(`/api/users/${auth0Username}`);
 
-  const addUserToDatabase = async () => {
-    if (userID) return;
-    axios.get(`/api/users/${username}`)
-      .then((getResponse) => {
-        if (getResponse.status === 204) {
-          axios.post(`/api/users/${username}`)
-            .then((postResponse) => {
-              setUserID(postResponse.data._id);
-            })
-            .catch((error) => console.error(error.message));
-        }
-      })
-      .catch((error) => console.error(error.message));
-  };
+    if (response.status === 204) {
+      // add new user to MongoDB
+      response = await axios.post(`/api/users/${auth0Username}`);
 
-  const initializeUserID = async () => {
-    if (!username) return;
-    axios.get(`/api/users/${username}`)
-      .then(async (response) => {
-        if (response.status === 204) {
-          await addUserToDatabase();
-        } else {
-          setUserID(response.data._id);
-        }
-      })
-      .catch((error) => console.error(error.message));
-  };
+      // generate starter unit set
+      await axios.post(`/api/units/users/${response.data._id}`);
+    }
+
+    // eslint-disable-next-line consistent-return
+    return response.data;
+  });
 
   useEffect(() => {
     initializeUsername();
-  }, [user]);
+  }, [auth0User]);
 
-  useEffect(() => {
-    initializeUserID();
-  }, [username]);
+  if (isLoading) {
+    return (
+      <Container className="mt-5">
+        <span>Loading...</span>
+      </Container>
+    );
+  }
 
-  useEffect(() => {
-    addUserToDatabase();
-    generateStarterForce();
-  }, [userID]);
+  if (isError) {
+    return (
+      <Container className="mt-5">
+        <span>
+          Error:
+          {error.message}
+        </span>
+      </Container>
+    );
+  }
 
   if (user) {
     return (
