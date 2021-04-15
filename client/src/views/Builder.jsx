@@ -30,6 +30,8 @@ function Builder() {
     const response = await axios.get(`/api/units/users/${user.data._id}`);
     // eslint-disable-next-line consistent-return
     return response.data;
+  }, {
+    enabled: !!user.data,
   });
 
   // TODO optimize into one PATCH?

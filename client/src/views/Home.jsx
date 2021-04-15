@@ -19,9 +19,7 @@ export default function Home() {
     setAuth0Username(auth0User[usernameKey]);
   };
 
-  const {
-    isLoading, isError, data: user, error,
-  } = useQuery(['users', auth0Username], async () => {
+  const user = useQuery(['users', auth0Username], async () => {
     if (!auth0Username) return;
     let response = await axios.get(`/api/users/${auth0Username}`);
 
@@ -41,7 +39,7 @@ export default function Home() {
     initializeAuth0Username();
   }, [auth0User]);
 
-  if (isLoading) {
+  if (user.isLoading) {
     return (
       <Container className="mt-5">
         <span>Loading...</span>
@@ -49,12 +47,12 @@ export default function Home() {
     );
   }
 
-  if (isError) {
+  if (user.error) {
     return (
       <Container className="mt-5">
         <span>
-          Error:
-          {error.message}
+          User Error:
+          {user.error.message}
         </span>
       </Container>
     );
