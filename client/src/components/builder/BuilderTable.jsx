@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 
@@ -68,9 +67,7 @@ function BuilderTable({ initialUnits, mutateUnits }) {
 
   if (!units || units.length === 0) {
     return (
-      <Container className="mt-5">
-        <span>Loading...</span>
-      </Container>
+      <></>
     );
   }
 

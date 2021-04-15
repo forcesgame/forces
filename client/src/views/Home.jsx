@@ -58,7 +58,7 @@ export default function Home() {
     );
   }
 
-  if (user) {
+  if (user.data) {
     return (
       <Container className="mt-5">
         <Row>
