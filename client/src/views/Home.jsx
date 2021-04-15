@@ -13,7 +13,7 @@ export default function Home() {
   const auth0User = useAuth0().user;
   const [auth0Username, setAuth0Username] = useState('');
 
-  const initializeUsername = async () => {
+  const initializeAuth0Username = async () => {
     if (!auth0User) return;
     const usernameKey = `${process.env.REACT_APP_AUTH0_NAMESPACE}username`;
     setAuth0Username(auth0User[usernameKey]);
@@ -38,7 +38,7 @@ export default function Home() {
   });
 
   useEffect(() => {
-    initializeUsername();
+    initializeAuth0Username();
   }, [auth0User]);
 
   if (isLoading) {
