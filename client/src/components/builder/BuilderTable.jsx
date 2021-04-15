@@ -22,14 +22,9 @@ const BuilderRow = ({ unit, onUnitChange }) => {
   );
 };
 
-function BuilderTable({ initialUnits, onUnitsChange }) {
-  const [units, setUnits] = useState([]);
+function BuilderTable({ initialUnits, mutateUnits }) {
+  const [units, setUnits] = useState(initialUnits);
   const [builderRows, setBuilderRows] = useState([]);
-
-  const initializeUnits = async () => {
-    if (!initialUnits) return;
-    setUnits(initialUnits);
-  };
 
   const onUnitChange = (unit) => {
     const updatedUnits = units.map((_unit) => {
@@ -58,7 +53,7 @@ function BuilderTable({ initialUnits, onUnitsChange }) {
   };
 
   useEffect(() => {
-    initializeUnits();
+    setUnits(initialUnits);
   }, [initialUnits]);
 
   useEffect(() => {
@@ -67,12 +62,12 @@ function BuilderTable({ initialUnits, onUnitsChange }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onUnitsChange(units);
+    mutateUnits(units);
   };
 
-  if (!units) {
+  if (!units || units.length === 0) {
     return (
-      <h1>Loading...</h1>
+      <></>
     );
   }
 

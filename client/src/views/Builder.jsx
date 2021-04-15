@@ -1,82 +1,92 @@
-import React, { useEffect, useState } from 'react';
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import axios from 'axios';
-
+import React, { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
+import { useMutation, useQuery } from 'react-query';
+
 import BuilderTable from '../components/builder/BuilderTable';
 
 function Builder() {
-  const { user } = useAuth0();
-  const [username, setUsername] = useState('');
-  const [userID, setUserID] = useState('');
-  const [units, setUnits] = useState([]);
+  const auth0User = useAuth0().user;
+  const [auth0Username, setAuth0Username] = useState('');
 
-  const initializeUsername = async () => {
-    try {
-      const usernameKey = `${process.env.REACT_APP_AUTH0_NAMESPACE}username`;
-      setUsername(user[usernameKey]);
-    } catch (error) {
-      console.error(error.message);
-    }
+  const initializeAuth0Username = async () => {
+    if (!auth0User) return;
+    const usernameKey = `${process.env.REACT_APP_AUTH0_NAMESPACE}username`;
+    setAuth0Username(auth0User[usernameKey]);
   };
 
-  const initializeUserID = async () => {
-    if (!username) return;
-    axios.get(`/api/users/${username}`)
-      .then((response) => {
-        setUserID(response.data._id);
-      })
-      .catch((error) => console.error(error.message));
-  };
+  const user = useQuery(['users', auth0Username], async () => {
+    const response = await axios.get(`/api/users/${auth0Username}`);
+    return response.data;
+  }, {
+    enabled: !!auth0Username,
+  });
 
-  const initializeUnits = async () => {
-    if (!userID) return;
-    axios.get(`/api/units/users/${userID}`)
-      .then((response) => {
-        setUnits(response.data);
-      })
-      .catch((error) => console.error(error.message));
-  };
+  const units = useQuery(['units', auth0Username], async () => {
+    const response = await axios.get(`/api/units/users/${user.data._id}`);
+    return response.data;
+  }, {
+    enabled: !!user.data,
+  });
 
-  useEffect(() => {
-    initializeUsername();
-  }, []);
-
-  useEffect(() => {
-    initializeUserID();
-  }, [username]);
-
-  useEffect(() => {
-    initializeUnits();
-  }, [userID]);
-
-  const onUnitsChange = async (changedUnits) => {
-    if (!userID) return;
+  // TODO optimize into one PATCH?
+  const unitsMutation = useMutation((changedUnits) => {
     changedUnits.forEach((changedUnit) => {
-      axios.patch(`/api/units/${changedUnit._id}`, changedUnit)
-        .catch((error) => console.error(error.message));
+      axios.patch(`/api/units/${changedUnit._id}`, changedUnit);
     });
-    window.alert('Force saved!');
-  };
 
-  if (units.length === 0) {
+    window.alert('Force saved!');
+  });
+
+  useEffect(() => {
+    initializeAuth0Username();
+  }, [auth0User]);
+
+  if (user.isLoading || units.isLoading) {
     return (
-      <>
-        <h1>Loading...</h1>
-      </>
+      <Container className="mt-5">
+        <span>Loading...</span>
+      </Container>
+    );
+  }
+
+  if (user.error) {
+    return (
+      <Container className="mt-5">
+        <span>
+          User Error:
+          {user.error.message}
+        </span>
+      </Container>
+    );
+  }
+
+  if (units.error) {
+    return (
+      <Container className="mt-5">
+        <span>
+          Units error:
+          {units.error.message}
+        </span>
+      </Container>
     );
   }
 
   return (
-    <Container>
+    <Container className="mt-5">
       <BuilderTable
-        initialUnits={units}
-        onUnitsChange={onUnitsChange}
+        initialUnits={units.data}
+        mutateUnits={unitsMutation.mutate}
       />
     </Container>
   );
 }
 
 export default withAuthenticationRequired(Builder, {
-  onRedirecting: () => <h1>Loading...</h1>,
+  onRedirecting: () => (
+    <Container className="mt-5">
+      <span>Loading...</span>
+    </Container>
+  ),
 });
