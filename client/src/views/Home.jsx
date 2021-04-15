@@ -20,7 +20,6 @@ export default function Home() {
   };
 
   const user = useQuery(['users', auth0Username], async () => {
-    if (!auth0Username) return;
     let response = await axios.get(`/api/users/${auth0Username}`);
 
     if (response.status === 204) {
@@ -31,8 +30,9 @@ export default function Home() {
       await axios.post(`/api/units/users/${response.data._id}`);
     }
 
-    // eslint-disable-next-line consistent-return
     return response.data;
+  }, {
+    enabled: !!auth0Username,
   });
 
   useEffect(() => {

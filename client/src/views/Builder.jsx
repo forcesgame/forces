@@ -17,18 +17,14 @@ function Builder() {
   };
 
   const user = useQuery(['users', auth0Username], async () => {
-    if (!auth0Username) return;
-
     const response = await axios.get(`/api/users/${auth0Username}`);
-    // eslint-disable-next-line consistent-return
     return response.data;
+  }, {
+    enabled: !!auth0Username,
   });
 
   const units = useQuery(['units', auth0Username], async () => {
-    if (!user.data) return;
-
     const response = await axios.get(`/api/units/users/${user.data._id}`);
-    // eslint-disable-next-line consistent-return
     return response.data;
   }, {
     enabled: !!user.data,
@@ -36,8 +32,6 @@ function Builder() {
 
   // TODO optimize into one PATCH?
   const unitsMutation = useMutation((changedUnits) => {
-    if (!user.data) return;
-
     changedUnits.forEach((changedUnit) => {
       axios.patch(`/api/units/${changedUnit._id}`, changedUnit);
     });
@@ -61,8 +55,8 @@ function Builder() {
     return (
       <Container className="mt-5">
         <span>
-          Error:
-          {`user error: ${user.error.message}`}
+          User Error:
+          {user.error.message}
         </span>
       </Container>
     );
@@ -72,8 +66,8 @@ function Builder() {
     return (
       <Container className="mt-5">
         <span>
-          Error:
-          {`units error: ${units.error.message}`}
+          Units error:
+          {units.error.message}
         </span>
       </Container>
     );
