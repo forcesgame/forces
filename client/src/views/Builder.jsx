@@ -32,6 +32,21 @@ function Builder() {
 
   // TODO optimize into one PATCH?
   const unitsMutation = useMutation((changedUnits) => {
+    const activeUnits = changedUnits.filter((unit) => unit.active);
+
+    if (activeUnits.length === 0) {
+      window.alert('You must have at least one active unit!');
+      return;
+    }
+
+    const reducer = (totalRating, unit) => totalRating + unit.rating;
+    const forceRating = activeUnits.reduce(reducer, 0);
+
+    if (forceRating > 9) {
+      window.alert('The sum of your unit\'s ratings cannot be greater than 9!');
+      return;
+    }
+
     changedUnits.forEach((changedUnit) => {
       axios.patch(`/api/units/${changedUnit._id}`, changedUnit);
     });
@@ -75,6 +90,10 @@ function Builder() {
 
   return (
     <Container className="mt-5">
+      <p>
+        A Force must have at least one unit, and the sum of your units&#39; ratings
+        can&#39;t be greater than 9.
+      </p>
       <BuilderTable
         initialUnits={units.data}
         mutateUnits={unitsMutation.mutate}
