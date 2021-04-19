@@ -114,15 +114,15 @@ router.patch('/units/:id', async (req, res) => {
       res.status(204);
       res.end();
     } else {
-      if (req.body.active) {
+      if ('active' in req.body) {
         unit.active = req.body.active;
       }
 
-      if (req.body.health) {
+      if ('health' in req.body) {
         unit.health = req.body.health;
       }
 
-      if (req.body.stamina) {
+      if ('stamina' in req.body) {
         unit.stamina = req.body.stamina;
       }
 
