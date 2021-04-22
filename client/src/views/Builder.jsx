@@ -31,7 +31,23 @@ function Builder() {
   });
 
   // TODO optimize into one PATCH?
-  const unitsMutation = useMutation((changedUnits) => {
+  // TODO break down into smaller functions
+  const unitsMutation = useMutation((activeUnitIDs) => {
+    const activeUnitIDsCopy = [...activeUnitIDs];
+
+    const changedUnits = units.data.map((unit) => {
+      const tempUnit = (unit);
+
+      if (activeUnitIDsCopy.includes(unit._id)) {
+        tempUnit.active = true;
+        const unitIndex = activeUnitIDsCopy.indexOf(unit._id);
+        activeUnitIDsCopy.splice(unitIndex, 1);
+      } else {
+        tempUnit.active = false;
+      }
+      return tempUnit;
+    });
+
     const activeUnits = changedUnits.filter((unit) => unit.active);
 
     if (activeUnits.length === 0) {
@@ -48,7 +64,9 @@ function Builder() {
     }
 
     changedUnits.forEach((changedUnit) => {
-      axios.patch(`/api/units/${changedUnit._id}`, changedUnit);
+      axios.patch(`/api/units/${changedUnit._id}`, {
+        active: changedUnit.active,
+      });
     });
 
     window.alert('Force saved!');
@@ -57,6 +75,19 @@ function Builder() {
   useEffect(() => {
     initializeAuth0Username();
   }, [auth0User]);
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const activeUnitIDs = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const pair of formData.entries()) {
+      activeUnitIDs.push(pair[1]);
+    }
+
+    unitsMutation.mutate(activeUnitIDs);
+  };
 
   if (user.isLoading || units.isLoading) {
     return (
@@ -88,6 +119,12 @@ function Builder() {
     );
   }
 
+  if (!units.data || units.data.length === 0) {
+    return (
+      <></>
+    );
+  }
+
   return (
     <Container className="mt-5">
       <p>
@@ -95,8 +132,8 @@ function Builder() {
         can&#39;t be greater than 9.
       </p>
       <BuilderTable
-        initialUnits={units.data}
-        mutateUnits={unitsMutation.mutate}
+        units={units.data}
+        onSubmit={onSubmit}
       />
     </Container>
   );
