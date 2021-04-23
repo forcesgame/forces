@@ -132,10 +132,10 @@ async function initializeMatches() {
 
   await Match.deleteMany();
 
-  const patrick = await User.findOne({ username: 'patrick' });
-  const otherpatrick = await User.findOne({ username: 'otherpatrick' });
-  const patrickActiveUnits = await Unit.find({ user: patrick, active: true });
-  const otherpatrickActiveUnits = await Unit.find({ user: otherpatrick, active: true });
+  const ben = await User.findOne({ username: 'ben' });
+  const jesus = await User.findOne({ username: 'jesus' });
+  const benActiveUnits = await Unit.find({ user: ben, active: true });
+  const jesusActiveUnits = await Unit.find({ user: jesus, active: true });
   const tiles = [];
 
   for (let i = 0; i < defaultColumnHeight; i += 1) {
@@ -143,25 +143,25 @@ async function initializeMatches() {
   }
 
   const topRow = tiles[0];
-  for (let i = 0; i < patrickActiveUnits.length; i += 1) {
+  for (let i = 0; i < benActiveUnits.length; i += 1) {
     const tileID = topRow[i];
     const tile = await Tile.findById(tileID);
-    tile.unit = patrickActiveUnits[i];
+    tile.unit = benActiveUnits[i];
     await tile.save();
   }
 
   const bottomRow = tiles[7];
-  for (let i = 0; i < otherpatrickActiveUnits.length; i += 1) {
+  for (let i = 0; i < jesusActiveUnits.length; i += 1) {
     const tileID = bottomRow[i];
     const tile = await Tile.findById(tileID);
-    tile.unit = otherpatrickActiveUnits[i];
+    tile.unit = jesusActiveUnits[i];
     await tile.save();
   }
 
   const match = new Match({
-    currentTurn: patrick,
-    user1: patrick,
-    user2: otherpatrick,
+    currentTurn: ben,
+    user1: ben,
+    user2: jesus,
     inProgress: true,
     tiles,
     winner: null,
