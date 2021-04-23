@@ -128,15 +128,13 @@ async function generateTileRow() {
   return row;
 }
 
-async function initializeMatches() {
+async function initializeMatch(user1ID, user2ID) {
   const defaultColumnHeight = 8;
 
   await Match.deleteMany();
 
-  const patrick = await User.findOne({ username: 'patrick' });
-  const otherpatrick = await User.findOne({ username: 'otherpatrick' });
-  const patrickActiveUnits = await Unit.find({ user: patrick, active: true });
-  const otherpatrickActiveUnits = await Unit.find({ user: otherpatrick, active: true });
+  const user1ActiveUnits = await Unit.find({ user: user1ID, active: true });
+  const user2ActiveUnits = await Unit.find({ user: user2ID, active: true });
   const tiles = [];
 
   for (let i = 0; i < defaultColumnHeight; i += 1) {
@@ -144,25 +142,25 @@ async function initializeMatches() {
   }
 
   const topRow = tiles[0];
-  for (let i = 0; i < patrickActiveUnits.length; i += 1) {
+  for (let i = 0; i < user1ActiveUnits.length; i += 1) {
     const tileID = topRow[i];
     const tile = await Tile.findById(tileID);
-    tile.unit = patrickActiveUnits[i];
+    tile.unit = user1ActiveUnits[i];
     await tile.save();
   }
 
   const bottomRow = tiles[7];
-  for (let i = 0; i < otherpatrickActiveUnits.length; i += 1) {
+  for (let i = 0; i < user2ActiveUnits.length; i += 1) {
     const tileID = bottomRow[i];
     const tile = await Tile.findById(tileID);
-    tile.unit = otherpatrickActiveUnits[i];
+    tile.unit = user2ActiveUnits[i];
     await tile.save();
   }
 
   const match = new Match({
-    currentTurn: patrick,
-    user1: patrick,
-    user2: otherpatrick,
+    currentTurn: user1ID,
+    user1: user1ID,
+    user2: user2ID,
     inProgress: true,
     tiles,
     winner: null,
@@ -185,7 +183,16 @@ router.post('/database/initialize', async (req, res) => {
   try {
     await initializeUsers();
     await initializeUnits();
-    await initializeMatches();
+
+    const patrick = await User.findOne(
+      { username: 'patrick' }, { _id: 1 },
+    );
+    const otherPatrick = await User.findOne(
+      { username: 'otherpatrick' }, { _id: 1 },
+    );
+
+    await initializeMatch(patrick._id, otherPatrick._id);
+
     await initializeQueue();
 
     const users = await User.find();
@@ -212,4 +219,5 @@ router.post('/database/initialize', async (req, res) => {
 module.exports = {
   database: router,
   generateDefaultUnits,
+  initializeMatch,
 };
