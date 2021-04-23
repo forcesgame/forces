@@ -496,6 +496,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "POST /matches",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user1ID\": \"<insert-id-here>\",\n    \"user2ID\": \"<insert-id-here>\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/matches",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"matches"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
