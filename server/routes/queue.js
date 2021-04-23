@@ -28,8 +28,14 @@ router.get('/queue', async (req, res) => {
 router.post('/queue/users/:userID', async (req, res) => {
   try {
     const queue = await Queue.findOne({});
-    queue.users.push(req.params.userID);
-    await queue.save();
+    const userIndex = queue.users.findIndex((queueUser) => (
+      JSON.stringify(queueUser._id) === JSON.stringify(req.params.userID)
+    ));
+
+    if (userIndex === -1) {
+      queue.users.push(req.params.userID);
+      await queue.save();
+    }
 
     const updatedQueue = await Queue.findOne({});
     const { users } = updatedQueue;
@@ -53,9 +59,8 @@ router.post('/queue/users/:userID', async (req, res) => {
 router.delete('/queue/users/:userID', async (req, res) => {
   try {
     const queue = await Queue.findOne({});
-    const user = await User.findById(req.params.userID);
     const userIndex = queue.users.findIndex((queueUser) => (
-      JSON.stringify(queueUser._id) === JSON.stringify(user._id)
+      JSON.stringify(queueUser._id) === JSON.stringify(req.params.userID)
     ));
 
     if (userIndex !== -1) {
