@@ -39,18 +39,24 @@ function Queue() {
     refetchInterval: 5000,
   });
 
-  const queueMutation = useMutation(async () => {
-    console.log(user.data._id);
-
+  const queueMutationJoin = useMutation(async () => {
     await axios.post(`/api/queue/users/${user.data._id}`);
+  });
+
+  const queueMutationLeave = useMutation(async () => {
+    await axios.delete(`/api/queue/users/${user.data._id}`);
   });
 
   useEffect(() => {
     initializeAuth0Username();
   }, [auth0User]);
 
-  const onSubmit = () => {
-    queueMutation.mutate();
+  const joinQueue = () => {
+    queueMutationJoin.mutate();
+  };
+
+  const leaveQueue = () => {
+    queueMutationLeave.mutate();
   };
 
   if (user.isLoading || queue.isLoading) {
@@ -86,7 +92,7 @@ function Queue() {
   if (queueIndex === -1) {
     return (
       <Container className="mt-5">
-        <Form onSubmit={onSubmit}>
+        <Form onSubmit={joinQueue}>
           <Button type="submit" variant="primary">Join Queue</Button>
         </Form>
       </Container>
@@ -95,7 +101,9 @@ function Queue() {
 
   return (
     <Container className="mt-5">
-      <span>in queue placeholder</span>
+      <Form onSubmit={leaveQueue}>
+        <Button type="submit" variant="danger">Leave Queue</Button>
+      </Form>
     </Container>
   );
 }
