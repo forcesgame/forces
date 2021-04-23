@@ -65,7 +65,7 @@ export default function Home() {
           <Col>
             <Card>
               <Card.Body>
-                <Card.Link href="#">Versus</Card.Link>
+                <Card.Link href="/versus">Versus</Card.Link>
               </Card.Body>
             </Card>
           </Col>
