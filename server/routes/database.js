@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 const Match = require('../models/Match');
+const Queue = require('../models/Queue');
 const Tile = require('../models/Tile');
 const Unit = require('../models/Unit');
 const User = require('../models/User');
@@ -170,20 +171,33 @@ async function initializeMatches() {
   await match.save();
 }
 
+async function initializeQueue() {
+  await Queue.deleteMany();
+
+  const queue = new Queue({
+    users: [],
+  });
+
+  await queue.save();
+}
+
 router.post('/database/initialize', async (req, res) => {
   try {
     await initializeUsers();
     await initializeUnits();
     await initializeMatches();
+    await initializeQueue();
 
     const users = await User.find();
     const units = await Unit.find();
     const matches = await Match.find();
+    const queue = await Queue.findOne({});
 
     res.send({
       Users: users,
       Units: units,
       Matches: matches,
+      Queue: queue,
     });
   } catch (error) {
     res.status(400);
