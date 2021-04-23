@@ -10,9 +10,8 @@ import NavBar from './components/NavBar';
 import Builder from './views/Builder';
 import Error from './views/Error';
 import Home from './views/Home';
-import Match from './views/Match';
 import NotFound from './views/NotFound';
-import Queue from './views/Queue';
+import Versus from './views/Versus';
 
 function App() {
   const { isLoading } = useAuth0;
@@ -29,8 +28,7 @@ function App() {
       <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/builder" component={Builder} />
-        <Route path="/match" component={Match} />
-        <Route path="/queue" component={Queue} />
+        <Route path="/versus" component={Versus} />
         <Route path="/error" component={Error} />
         <Route component={NotFound} />
       </Switch>
