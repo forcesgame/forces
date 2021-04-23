@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 const Match = require('../models/Match');
+const Queue = require('../models/Queue');
 const Tile = require('../models/Tile');
 const Unit = require('../models/Unit');
 const User = require('../models/User');
@@ -127,15 +128,11 @@ async function generateTileRow() {
   return row;
 }
 
-async function initializeMatches() {
+async function generateMatch(user1ID, user2ID) {
   const defaultColumnHeight = 8;
 
-  await Match.deleteMany();
-
-  const ben = await User.findOne({ username: 'ben' });
-  const jesus = await User.findOne({ username: 'jesus' });
-  const benActiveUnits = await Unit.find({ user: ben, active: true });
-  const jesusActiveUnits = await Unit.find({ user: jesus, active: true });
+  const user1ActiveUnits = await Unit.find({ user: user1ID, active: true });
+  const user2ActiveUnits = await Unit.find({ user: user2ID, active: true });
   const tiles = [];
 
   for (let i = 0; i < defaultColumnHeight; i += 1) {
@@ -143,25 +140,25 @@ async function initializeMatches() {
   }
 
   const topRow = tiles[0];
-  for (let i = 0; i < benActiveUnits.length; i += 1) {
+  for (let i = 0; i < user1ActiveUnits.length; i += 1) {
     const tileID = topRow[i];
     const tile = await Tile.findById(tileID);
-    tile.unit = benActiveUnits[i];
+    tile.unit = user1ActiveUnits[i];
     await tile.save();
   }
 
   const bottomRow = tiles[7];
-  for (let i = 0; i < jesusActiveUnits.length; i += 1) {
+  for (let i = 0; i < user2ActiveUnits.length; i += 1) {
     const tileID = bottomRow[i];
     const tile = await Tile.findById(tileID);
-    tile.unit = jesusActiveUnits[i];
+    tile.unit = user2ActiveUnits[i];
     await tile.save();
   }
 
   const match = new Match({
-    currentTurn: ben,
-    user1: ben,
-    user2: jesus,
+    currentTurn: user1ID,
+    user1: user1ID,
+    user2: user2ID,
     inProgress: true,
     tiles,
     winner: null,
@@ -170,20 +167,46 @@ async function initializeMatches() {
   await match.save();
 }
 
+async function initializeMatches() {
+  await Match.deleteMany();
+
+  const jesus = await User.findOne(
+    { username: 'jesus' }, { _id: 1 },
+  );
+  const ben = await User.findOne(
+    { username: 'ben' }, { _id: 1 },
+  );
+
+  await generateMatch(jesus._id, ben._id);
+}
+
+async function initializeQueue() {
+  await Queue.deleteMany();
+
+  const queue = new Queue({
+    users: [],
+  });
+
+  await queue.save();
+}
+
 router.post('/database/initialize', async (req, res) => {
   try {
     await initializeUsers();
     await initializeUnits();
     await initializeMatches();
+    await initializeQueue();
 
     const users = await User.find();
     const units = await Unit.find();
     const matches = await Match.find();
+    const queue = await Queue.findOne({});
 
     res.send({
       Users: users,
       Units: units,
       Matches: matches,
+      Queue: queue,
     });
   } catch (error) {
     res.status(400);
@@ -198,4 +221,5 @@ router.post('/database/initialize', async (req, res) => {
 module.exports = {
   database: router,
   generateDefaultUnits,
+  generateMatch,
 };
