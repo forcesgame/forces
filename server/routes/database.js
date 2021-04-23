@@ -128,10 +128,8 @@ async function generateTileRow() {
   return row;
 }
 
-async function initializeMatch(user1ID, user2ID) {
+async function generateMatch(user1ID, user2ID) {
   const defaultColumnHeight = 8;
-
-  await Match.deleteMany();
 
   const user1ActiveUnits = await Unit.find({ user: user1ID, active: true });
   const user2ActiveUnits = await Unit.find({ user: user2ID, active: true });
@@ -169,6 +167,20 @@ async function initializeMatch(user1ID, user2ID) {
   await match.save();
 }
 
+async function initializeMatches() {
+  await Match.deleteMany();
+
+  const patrick = await User.findOne(
+    { username: 'patrick' }, { _id: 1 },
+  );
+
+  const otherpatrick = await User.findOne(
+    { username: 'otherpatrick' }, { _id: 1 },
+  );
+
+  await generateMatch(patrick._id, otherpatrick._id);
+}
+
 async function initializeQueue() {
   await Queue.deleteMany();
 
@@ -183,16 +195,7 @@ router.post('/database/initialize', async (req, res) => {
   try {
     await initializeUsers();
     await initializeUnits();
-
-    const patrick = await User.findOne(
-      { username: 'patrick' }, { _id: 1 },
-    );
-    const otherPatrick = await User.findOne(
-      { username: 'otherpatrick' }, { _id: 1 },
-    );
-
-    await initializeMatch(patrick._id, otherPatrick._id);
-
+    await initializeMatches();
     await initializeQueue();
 
     const users = await User.find();
@@ -219,5 +222,5 @@ router.post('/database/initialize', async (req, res) => {
 module.exports = {
   database: router,
   generateDefaultUnits,
-  initializeMatch,
+  generateMatch,
 };
