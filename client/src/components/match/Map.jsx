@@ -1,36 +1,29 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 
 const MapTile = ({ tile }) => {
+  const [background, setBackground] = useState('');
+
+  const typeToBackground = (type) => {
+    if (!type) return '';
+    if (type === 'ROAD') return 'lightgrey';
+    if (type === 'FOREST') return 'lightgreen';
+    if (type === 'PLAINS') return 'tan';
+    return '';
+  };
+
   if (!tile) {
     return (
       <></>
     );
   }
 
-  if (tile.type === 'ROAD') {
-    return (
-      <td style={{ border: '2px solid black', background: 'lightgrey' }}>
-        {tile.type}
-        <br />
-        {tile.unit ? `${tile.unit.user.username}'s ${tile.unit.type}` : ''}
-      </td>
-    );
-  }
-
-  if (tile.type === 'FOREST') {
-    return (
-      <td style={{ border: '2px solid black', background: 'lightgreen' }}>
-        {tile.type}
-        <br />
-        {tile.unit ? `${tile.unit.user.username}'s ${tile.unit.type}` : ''}
-      </td>
-    );
-  }
+  useEffect(() => {
+    setBackground(typeToBackground(tile.type));
+  }, [tile]);
 
   return (
-    <td style={{ border: '2px solid black', background: 'tan' }}>
+    <td style={{ border: '2px solid black', background }}>
       {tile.type}
       <br />
       {tile.unit ? `${tile.unit.user.username}'s ${tile.unit.type}` : ''}
