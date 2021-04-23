@@ -9,7 +9,8 @@ import { useMutation, useQuery } from 'react-query';
 function Queue() {
   const auth0User = useAuth0().user;
   const [auth0Username, setAuth0Username] = useState('');
-  const [queueIndex, setQueueIndex] = useState(-1);
+  const [userQueueIndex, setUserQueueIndex] = useState(-1);
+  const [opponentQueueIndex, setOpponentQueueIndex] = useState(-1);
 
   const initializeAuth0Username = async () => {
     if (!auth0User) return;
@@ -29,9 +30,16 @@ function Queue() {
 
     const { users } = response.data;
 
-    setQueueIndex(users.findIndex((queueUser) => (
+    setUserQueueIndex(users.findIndex((queueUser) => (
       JSON.stringify(queueUser._id) === JSON.stringify(user.data._id)
     )));
+
+    setOpponentQueueIndex(users.findIndex((queueUser) => (
+      JSON.stringify(queueUser._id) !== JSON.stringify(user.data._id)
+    )));
+
+    // eslint-disable-next-line no-use-before-define
+    matchMutation.mutate(userQueueIndex, opponentQueueIndex);
 
     return response.data;
   }, {
@@ -45,6 +53,23 @@ function Queue() {
 
   const queueMutationLeave = useMutation(async () => {
     await axios.delete(`/api/queue/users/${user.data._id}`);
+  });
+
+  const matchMutation = useMutation(async () => {
+    if (userQueueIndex === -1 || opponentQueueIndex === -1) return;
+
+    if (!queue.data) return;
+    const { users } = queue.data;
+    const user1 = users[userQueueIndex];
+    const user2 = users[opponentQueueIndex];
+
+    if (!user1 || !user2) return;
+    const user1ID = users[userQueueIndex]._id;
+    const user2ID = users[opponentQueueIndex]._id;
+
+    if (!user1ID || !user2ID) return;
+    await axios.post('/api/matches', { user1ID, user2ID });
+    await queueMutationLeave.mutate();
   });
 
   useEffect(() => {
@@ -89,7 +114,7 @@ function Queue() {
     );
   }
 
-  if (queueIndex === -1) {
+  if (userQueueIndex === -1) {
     return (
       <Container className="mt-5">
         <Form onSubmit={joinQueue}>

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import React, { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
@@ -30,6 +29,7 @@ function Versus() {
     return response.data;
   }, {
     enabled: !!user.data,
+    refetchInterval: 5000,
   });
 
   useEffect(() => {

@@ -169,16 +169,6 @@ async function generateMatch(user1ID, user2ID) {
 
 async function initializeMatches() {
   await Match.deleteMany();
-
-  const patrick = await User.findOne(
-    { username: 'patrick' }, { _id: 1 },
-  );
-
-  const otherpatrick = await User.findOne(
-    { username: 'otherpatrick' }, { _id: 1 },
-  );
-
-  await generateMatch(patrick._id, otherpatrick._id);
 }
 
 async function initializeQueue() {
