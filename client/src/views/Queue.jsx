@@ -1,8 +1,10 @@
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
-import React, { useEffect, useState } from 'react';
-import Container from 'react-bootstrap/Container';
-import { useQuery } from 'react-query';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import { useMutation, useQuery } from 'react-query';
 
 function Queue() {
   const auth0User = useAuth0().user;
@@ -37,9 +39,19 @@ function Queue() {
     refetchInterval: 5000,
   });
 
+  const queueMutation = useMutation(async () => {
+    console.log(user.data._id);
+
+    await axios.post(`/api/queue/users/${user.data._id}`);
+  });
+
   useEffect(() => {
     initializeAuth0Username();
   }, [auth0User]);
+
+  const onSubmit = () => {
+    queueMutation.mutate();
+  };
 
   if (user.isLoading || queue.isLoading) {
     return (
@@ -74,7 +86,9 @@ function Queue() {
   if (queueIndex === -1) {
     return (
       <Container className="mt-5">
-        <span>not in queue placeholder</span>
+        <Form onSubmit={onSubmit}>
+          <Button type="submit" variant="primary">Join Queue</Button>
+        </Form>
       </Container>
     );
   }
