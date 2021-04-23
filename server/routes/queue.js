@@ -2,19 +2,12 @@ const express = require('express');
 
 const router = express.Router();
 const Queue = require('../models/Queue');
-const User = require('../models/User');
 
 router.get('/queue', async (req, res) => {
   try {
     const queue = await Queue.findOne({});
-    const { users } = queue;
 
-    if (!users || users.length === 0) {
-      res.status(404);
-      res.end();
-    } else {
-      res.send(queue);
-    }
+    res.send(queue);
   } catch (error) {
     res.status(400);
     res.send({
@@ -38,14 +31,8 @@ router.post('/queue/users/:userID', async (req, res) => {
     }
 
     const updatedQueue = await Queue.findOne({});
-    const { users } = updatedQueue;
 
-    if (!users || users.length === 0) {
-      res.status(404);
-      res.end();
-    } else {
-      res.send(users);
-    }
+    res.send(updatedQueue);
   } catch (error) {
     res.status(400);
     res.send({
