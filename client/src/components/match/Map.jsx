@@ -2,15 +2,41 @@
 import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 
-const MapTile = ({ tile }) => (
-  // <td style={{ border: '2px solid black' }}>
-  <TileColor tile={tile}>
-    {tile.type}
-    <br />
-    {tile.unit ? `${tile.unit.user.username}'s ${tile.unit.type}` : ''}
-  </TileColor>
-  // </td>
-);
+const MapTile = ({ tile }) => {
+  if (!tile) {
+    return (
+      <></>
+    );
+  }
+
+  if (tile.type === 'ROAD') {
+    return (
+      <td style={{ border: '2px solid black', background: 'lightgrey' }}>
+        {tile.type}
+        <br />
+        {tile.unit ? `${tile.unit.user.username}'s ${tile.unit.type}` : ''}
+      </td>
+    );
+  }
+
+  if (tile.type === 'FOREST') {
+    return (
+      <td style={{ border: '2px solid black', background: 'lightgreen' }}>
+        {tile.type}
+        <br />
+        {tile.unit ? `${tile.unit.user.username}'s ${tile.unit.type}` : ''}
+      </td>
+    );
+  }
+
+  return (
+    <td style={{ border: '2px solid black', background: 'tan' }}>
+      {tile.type}
+      <br />
+      {tile.unit ? `${tile.unit.user.username}'s ${tile.unit.type}` : ''}
+    </td>
+  );
+};
 
 const MapRow = ({ row }) => {
   const tiles = row.map((tile) => (
@@ -74,30 +100,6 @@ function Map({ initialMatch }) {
         {mapRows}
       </tbody>
     </Table>
-  );
-}
-
-function TileColor({ tile }) {
-  const [color, setColor] = useState({});
-
-  if (!tile) {
-    return (
-      <></>
-    );
-  }
-
-  if (tile.type === 'ROAD') {
-    setColor('lightgrey');
-  } else if (tile.type === 'FOREST') {
-    setColor('lightgreen');
-  } else {
-    setColor('lightbrown');
-  }
-
-  console.log('test');
-
-  return (
-    <td>testing td</td>
   );
 }
 
