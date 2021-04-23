@@ -34,6 +34,7 @@ function Queue() {
     return response.data;
   }, {
     enabled: !!user.data,
+    refetchInterval: 5000,
   });
 
   useEffect(() => {
