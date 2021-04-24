@@ -26,6 +26,9 @@ const MapTile = ({ tile }) => {
     <td style={{ border: '2px solid black', background }}>
       {tile.type}
       <br />
+      {/* {tile._id} */}
+      <GetTileId tile={tile} />
+      <br />
       {tile.unit ? `${tile.unit.user.username}'s ${tile.unit.type}` : ''}
     </td>
   );
@@ -93,6 +96,15 @@ function Map({ initialMatch }) {
         {mapRows}
       </tbody>
     </Table>
+  );
+}
+
+// obtain the tile._id based on the tile  provided
+function GetTileId({ tile }) {
+  const tileId = `${tile._id}`;
+
+  return (
+    tileId
   );
 }
 
