@@ -67,7 +67,7 @@ function Match() {
   return (
     <Container className="mt-5">
       <Map
-        initialMatch={match.data}
+        match={match.data}
       />
     </Container>
   );

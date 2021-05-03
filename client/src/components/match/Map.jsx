@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Table from 'react-bootstrap/Table';
 
 const MapTile = ({ tile }) => (
@@ -24,51 +24,27 @@ const MapRow = ({ row }) => {
   );
 };
 
-function Map({ initialMatch }) {
-  const [match, setMatch] = useState({});
-  const [mapRows, setMapRows] = useState([]);
-
-  const initializeMatch = async () => {
-    if (!initialMatch) return;
-    setMatch(initialMatch);
-  };
-
-  const initializeMapRows = async () => {
-    if (!match) return;
-    const { tiles } = match;
-    if (!tiles) return;
-    let rowIndex = -1;
-    setMapRows(
-      tiles.map((row) => {
-        rowIndex += 1;
-        return (
-          <MapRow
-            key={rowIndex}
-            row={row}
-          />
-        );
-      }),
-    );
-  };
-
-  useEffect(() => {
-    initializeMatch();
-  }, [initialMatch]);
-
-  useEffect(() => {
-    initializeMapRows();
-  }, [match]);
-
-  if (!mapRows) {
+function Map({ match }) {
+  if (!match || !match.tiles) {
     return (
-      <h1>Loading...</h1>
+      <div />
     );
   }
+
+  let rowIndex = -1;
 
   return (
     <Table>
       <tbody>
-        {mapRows}
+        {match.tiles.map((row) => {
+          rowIndex += 1;
+          return (
+            <MapRow
+              key={rowIndex}
+              row={row}
+            />
+          );
+        })}
       </tbody>
     </Table>
   );
