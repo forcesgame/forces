@@ -1,28 +1,24 @@
 import React from 'react';
-import Table from 'react-bootstrap/Table';
 
-const MapTile = ({ tile }) => (
-  <td>
-    {tile.type}
-    <br />
-    {tile.unit ? `${tile.unit.user.username}'s ${tile.unit.type}` : ''}
-  </td>
+const Tile = () => (
+  <div style={{
+    border: 'solid',
+    width: '100%',
+    height: '100%',
+  }}
+  />
 );
 
-const MapRow = ({ row }) => {
-  const tiles = row.map((tile) => (
-    <MapTile
-      key={tile._id}
-      tile={tile}
-    />
-  ));
-
-  return (
-    <tr>
-      {tiles}
-    </tr>
-  );
-};
+const BoardTile = () => (
+  <div style={{
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+  }}
+  >
+    <Tile />
+  </div>
+);
 
 function Map({ match }) {
   if (!match || !match.tiles) {
@@ -31,22 +27,34 @@ function Map({ match }) {
     );
   }
 
-  let rowIndex = -1;
+  const renderBoardTile = (i) => (
+    <div
+      key={i}
+      style={{
+        width: '12.5%',
+        height: '12.5%',
+      }}
+    >
+      <BoardTile />
+    </div>
+  );
+
+  const tiles = [];
+
+  for (let i = 0; i < 64; i += 1) {
+    tiles.push(renderBoardTile(i));
+  }
 
   return (
-    <Table>
-      <tbody>
-        {match.tiles.map((row) => {
-          rowIndex += 1;
-          return (
-            <MapRow
-              key={rowIndex}
-              row={row}
-            />
-          );
-        })}
-      </tbody>
-    </Table>
+    <div style={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      flexWrap: 'wrap',
+    }}
+    >
+      {tiles}
+    </div>
   );
 }
 
