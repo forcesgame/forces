@@ -1,22 +1,54 @@
 import React from 'react';
 
-const Tile = () => (
-  <div style={{
-    border: 'solid',
-    width: '100%',
-    height: '100%',
-  }}
-  />
-);
+const Tile = ({ terrain, unit }) => {
+  let backgroundColor = '';
+  let unitEmoji = '';
 
-const BoardTile = () => (
+  if (!terrain) {
+    backgroundColor = '';
+  } else if (terrain === 'ROAD') {
+    backgroundColor = 'lightgrey';
+  } else if (terrain === 'FOREST') {
+    backgroundColor = 'lightgreen';
+  } else if (terrain === 'PLAINS') {
+    backgroundColor = 'tan';
+  }
+
+  if (!unit || !unit.type) {
+    unitEmoji = '';
+  } else if (unit.type === 'INFANTRY') {
+    unitEmoji = '✌️';
+  } else if (unit.type === 'BAZOOKA') {
+    unitEmoji = '🖐️️️';
+  } else if (unit.type === 'TANK') {
+    unitEmoji = '✊️';
+  }
+
+  return (
+    <div style={{
+      backgroundColor,
+      border: '1px solid',
+      fontSize: '50px',
+      fontWeight: 'bold',
+      height: '95%',
+      justifyContent: 'center',
+      textAlign: 'center',
+      width: '95%',
+    }}
+    >
+      {unitEmoji}
+    </div>
+  );
+};
+
+const BoardTile = ({ terrain, unit }) => (
   <div style={{
     position: 'relative',
     width: '100%',
     height: '100%',
   }}
   >
-    <Tile />
+    <Tile terrain={terrain} unit={unit} />
   </div>
 );
 
@@ -27,22 +59,32 @@ function Map({ match }) {
     );
   }
 
-  const renderBoardTile = (i) => (
+  const renderBoardTile = (key, terrain, unit) => (
     <div
-      key={i}
+      key={key}
       style={{
         width: '12.5%',
         height: '12.5%',
       }}
     >
-      <BoardTile />
+      <BoardTile terrain={terrain} unit={unit} />
     </div>
   );
 
   const tiles = [];
+  let key = 0;
 
-  for (let i = 0; i < 64; i += 1) {
-    tiles.push(renderBoardTile(i));
+  for (let row = 0; row < 8; row += 1) {
+    for (let col = 0; col < 8; col += 1) {
+      const tile = match.tiles[row][col];
+      tiles.push(renderBoardTile(
+        key,
+        tile.type,
+        tile.unit,
+      ));
+
+      key += 1;
+    }
   }
 
   return (
