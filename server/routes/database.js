@@ -12,13 +12,9 @@ const User = require('../models/User');
 async function initializeUsers() {
   await User.deleteMany();
 
-  const ben = new User({ username: 'ben' });
-  const jesus = new User({ username: 'jesus' });
   const patrick = new User({ username: 'patrick' });
   const otherpatrick = new User({ username: 'otherpatrick' });
 
-  await ben.save();
-  await jesus.save();
   await patrick.save();
   await otherpatrick.save();
 }
@@ -90,13 +86,9 @@ async function generateDefaultUnits(user) {
 async function initializeUnits() {
   await Unit.deleteMany();
 
-  const ben = await User.findOne({ username: 'ben' });
-  const jesus = await User.findOne({ username: 'jesus' });
   const patrick = await User.findOne({ username: 'patrick' });
   const otherpatrick = await User.findOne({ username: 'otherpatrick' });
 
-  await generateDefaultUnits(ben);
-  await generateDefaultUnits(jesus);
   await generateDefaultUnits(patrick);
   await generateDefaultUnits(otherpatrick);
 }
@@ -170,14 +162,14 @@ async function generateMatch(user1ID, user2ID) {
 async function initializeMatches() {
   await Match.deleteMany();
 
-  const jesus = await User.findOne(
-    { username: 'jesus' }, { _id: 1 },
+  const patrick = await User.findOne(
+    { username: 'patrick' }, { _id: 1 },
   );
-  const ben = await User.findOne(
-    { username: 'ben' }, { _id: 1 },
+  const otherpatrick = await User.findOne(
+    { username: 'otherpatrick' }, { _id: 1 },
   );
 
-  await generateMatch(jesus._id, ben._id);
+  await generateMatch(patrick._id, otherpatrick._id);
 }
 
 async function initializeQueue() {
