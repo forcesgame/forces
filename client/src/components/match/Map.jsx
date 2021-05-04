@@ -82,23 +82,8 @@ function Map({ match, user }) {
 
   const initializeTiles = () => {
     if (!match) return;
-
     const _tiles = [];
-    let key = 0;
-
-    match.tiles.flat().forEach((tile) => {
-      _tiles.push(
-        <div key={key}>
-          <Tile
-            tile={tile}
-            onClick={onClick}
-          />
-        </div>,
-      );
-
-      key += 1;
-    });
-
+    match.tiles.flat().forEach((tile) => { _tiles.push(tile); });
     setTiles(_tiles);
   };
 
@@ -109,6 +94,7 @@ function Map({ match, user }) {
   useEffect(() => {
     console.log('selected unit:');
     console.log(selectedUnit);
+    console.log(tiles);
   }, [selectedUnit]);
 
   if (!match || !user) {
@@ -116,6 +102,22 @@ function Map({ match, user }) {
       <></>
     );
   }
+
+  const renderTiles = (_tiles) => {
+    const renderedTiles = [];
+    for (let i = 0; i < tiles.length; i += 1) {
+      renderedTiles.push(
+        <div key={i}>
+          <Tile
+            tile={_tiles[i]}
+            onClick={onClick}
+          />
+        </div>,
+      );
+    }
+
+    return renderedTiles;
+  };
 
   return (
     <div style={{
@@ -126,7 +128,7 @@ function Map({ match, user }) {
       gridTemplateRows: 'repeat(8, 1fr)',
     }}
     >
-      {tiles}
+      {renderTiles(tiles)}
     </div>
   );
 }
