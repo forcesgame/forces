@@ -65,7 +65,7 @@ function Match() {
   }
 
   return (
-    <Container style={{ width: '750px', height: '750px' }} className="mt-5">
+    <Container style={{ width: '85vmin', height: '85vmin' }} className="mt-5">
       <Map
         match={match.data}
       />

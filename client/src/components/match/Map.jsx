@@ -28,7 +28,7 @@ const Tile = ({ terrain, unit }) => {
     <div style={{
       backgroundColor,
       border: '1px solid',
-      fontSize: '50px',
+      fontSize: '5vmin',
       fontWeight: 'bold',
       height: '95%',
       justifyContent: 'center',
