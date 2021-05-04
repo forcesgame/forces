@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import Auth0ProviderWithHistory from './auth/Auth0ProviderWithHistory';
 
 import App from './App';
@@ -19,9 +17,7 @@ ReactDOM.render(
     <Router>
       <QueryClientProvider client={queryClient}>
         <Auth0ProviderWithHistory>
-          <DndProvider backend={HTML5Backend}>
-            <App />
-          </DndProvider>
+          <App />
         </Auth0ProviderWithHistory>
       </QueryClientProvider>
     </Router>

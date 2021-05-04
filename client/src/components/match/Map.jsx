@@ -1,40 +1,22 @@
 import React from 'react';
-import { useDrag } from 'react-dnd';
-
-import { ItemTypes } from './ItemTypes';
 
 const Unit = ({ unit }) => {
   let emoji = '';
-  let type = '';
 
   if (!unit || !unit.type) {
     emoji = '';
   } else if (unit.type === 'INFANTRY') {
     emoji = '✌️';
-    type = ItemTypes.INFANTRY;
   } else if (unit.type === 'BAZOOKA') {
     emoji = '🖐️️️';
-    type = ItemTypes.BAZOOKA;
   } else if (unit.type === 'TANK') {
     emoji = '✊️';
-    type = ItemTypes.TANK;
   }
 
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type,
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
-
   return (
-    <div
-      ref={drag}
-      style={{
-        cursor: 'move',
-        fontSize: '5vmin',
-        opacity: isDragging ? 0.5 : 1,
-      }}
+    <div style={{
+      fontSize: '5vmin',
+    }}
     >
       {emoji}
     </div>
