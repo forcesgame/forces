@@ -83,21 +83,18 @@ function Map({ match, user }) {
   const tiles = [];
   let key = 0;
 
-  for (let row = 0; row < 8; row += 1) {
-    for (let col = 0; col < 8; col += 1) {
-      const tile = match.tiles[row][col];
-      tiles.push(
-        <div key={key}>
-          <Tile
-            tile={tile}
-            onClick={onClick}
-          />
-        </div>,
-      );
+  match.tiles.flat().forEach((tile) => {
+    tiles.push(
+      <div key={key}>
+        <Tile
+          tile={tile}
+          onClick={onClick}
+        />
+      </div>,
+    );
 
-      key += 1;
-    }
-  }
+    key += 1;
+  });
 
   return (
     <div style={{
