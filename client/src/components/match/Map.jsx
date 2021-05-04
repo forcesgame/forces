@@ -14,10 +14,7 @@ const Unit = ({ unit }) => {
   }
 
   return (
-    <div style={{
-      fontSize: '5vmin',
-    }}
-    >
+    <div style={{ fontSize: '5vmin' }}>
       {emoji}
     </div>
   );
@@ -37,30 +34,21 @@ const Tile = ({ terrain, unit }) => {
   }
 
   return (
-    <div style={{
-      backgroundColor,
-      border: '1px solid',
-      height: '95%',
-      justifyContent: 'center',
-      textAlign: 'center',
-      width: '95%',
-    }}
+    <button
+      style={{
+        backgroundColor,
+        border: '1px solid',
+        height: '95%',
+        justifyContent: 'center',
+        textAlign: 'center',
+        width: '95%',
+      }}
+      type="button"
     >
       <Unit unit={unit} />
-    </div>
+    </button>
   );
 };
-
-const BoardTile = ({ terrain, unit }) => (
-  <div style={{
-    position: 'relative',
-    width: '100%',
-    height: '100%',
-  }}
-  >
-    <Tile terrain={terrain} unit={unit} />
-  </div>
-);
 
 function Map({ match }) {
   if (!match || !match.tiles) {
@@ -69,29 +57,17 @@ function Map({ match }) {
     );
   }
 
-  const renderBoardTile = (key, terrain, unit) => (
-    <div
-      key={key}
-      style={{
-        width: '12.5%',
-        height: '12.5%',
-      }}
-    >
-      <BoardTile terrain={terrain} unit={unit} />
-    </div>
-  );
-
   const tiles = [];
   let key = 0;
 
   for (let row = 0; row < 8; row += 1) {
     for (let col = 0; col < 8; col += 1) {
       const tile = match.tiles[row][col];
-      tiles.push(renderBoardTile(
-        key,
-        tile.type,
-        tile.unit,
-      ));
+      tiles.push(
+        <div key={key}>
+          <Tile terrain={tile.type} unit={tile.unit} />
+        </div>,
+      );
 
       key += 1;
     }
@@ -101,8 +77,9 @@ function Map({ match }) {
     <div style={{
       width: '100%',
       height: '100%',
-      display: 'flex',
-      flexWrap: 'wrap',
+      display: 'grid',
+      gridTemplateColumns: 'repeat(8, 1fr)',
+      gridTemplateRows: 'repeat(8, 1fr)',
     }}
     >
       {tiles}
