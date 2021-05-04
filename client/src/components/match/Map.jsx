@@ -1,8 +1,30 @@
 import React from 'react';
 
+const Unit = ({ unit }) => {
+  let emoji = '';
+
+  if (!unit || !unit.type) {
+    emoji = '';
+  } else if (unit.type === 'INFANTRY') {
+    emoji = '✌️';
+  } else if (unit.type === 'BAZOOKA') {
+    emoji = '🖐️️️';
+  } else if (unit.type === 'TANK') {
+    emoji = '✊️';
+  }
+
+  return (
+    <div style={{
+      fontSize: '5vmin',
+    }}
+    >
+      {emoji}
+    </div>
+  );
+};
+
 const Tile = ({ terrain, unit }) => {
   let backgroundColor = '';
-  let unitEmoji = '';
 
   if (!terrain) {
     backgroundColor = '';
@@ -14,29 +36,17 @@ const Tile = ({ terrain, unit }) => {
     backgroundColor = 'tan';
   }
 
-  if (!unit || !unit.type) {
-    unitEmoji = '';
-  } else if (unit.type === 'INFANTRY') {
-    unitEmoji = '✌️';
-  } else if (unit.type === 'BAZOOKA') {
-    unitEmoji = '🖐️️️';
-  } else if (unit.type === 'TANK') {
-    unitEmoji = '✊️';
-  }
-
   return (
     <div style={{
       backgroundColor,
       border: '1px solid',
-      fontSize: '5vmin',
-      fontWeight: 'bold',
       height: '95%',
       justifyContent: 'center',
       textAlign: 'center',
       width: '95%',
     }}
     >
-      {unitEmoji}
+      <Unit unit={unit} />
     </div>
   );
 };
