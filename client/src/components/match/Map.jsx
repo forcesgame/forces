@@ -14,27 +14,31 @@ const Unit = ({ unit }) => {
   }
 
   return (
-    <div style={{ fontSize: '5vmin' }}>
+    <div style={{
+      fontSize: '5vmin',
+      pointerEvents: 'none',
+    }}
+    >
       {emoji}
     </div>
   );
 };
 
-const Tile = ({ terrain, unit }) => {
+const Tile = ({ tile, onClick }) => {
+  const { type, unit } = tile;
   let backgroundColor = '';
 
-  if (!terrain) {
-    backgroundColor = '';
-  } else if (terrain === 'ROAD') {
+  if (type === 'ROAD') {
     backgroundColor = 'lightgrey';
-  } else if (terrain === 'FOREST') {
+  } else if (type === 'FOREST') {
     backgroundColor = 'lightgreen';
-  } else if (terrain === 'PLAINS') {
+  } else if (type === 'PLAINS') {
     backgroundColor = 'tan';
   }
 
   return (
     <button
+      onClick={onClick}
       style={{
         backgroundColor,
         border: '1px solid',
@@ -44,18 +48,37 @@ const Tile = ({ terrain, unit }) => {
         width: '95%',
       }}
       type="button"
+      value={tile._id}
     >
       <Unit unit={unit} />
     </button>
   );
 };
 
-function Map({ match }) {
-  if (!match || !match.tiles) {
+function Map({ match, user }) {
+  if (!match || !user) {
     return (
-      <div />
+      <></>
     );
   }
+
+  const onClick = (event) => {
+    const tileID = event.target.value;
+    const tiles = match.tiles.flat();
+    const tile = tiles.find((_tile) => _tile._id === tileID);
+
+    if (tile.unit) {
+      const unitOwnerID = tile.unit.user._id;
+
+      if (unitOwnerID === user._id) {
+        console.log('That\'s one of your units.');
+      } else {
+        console.log('That\'s not your unit!');
+      }
+    } else {
+      console.log('You clicked on a tile, but there\'s no unit there...');
+    }
+  };
 
   const tiles = [];
   let key = 0;
@@ -65,7 +88,10 @@ function Map({ match }) {
       const tile = match.tiles[row][col];
       tiles.push(
         <div key={key}>
-          <Tile terrain={tile.type} unit={tile.unit} />
+          <Tile
+            tile={tile}
+            onClick={onClick}
+          />
         </div>,
       );
 

@@ -68,6 +68,7 @@ function Match() {
     <Container style={{ width: '85vmin', height: '85vmin' }} className="mt-5">
       <Map
         match={match.data}
+        user={user.data}
       />
     </Container>
   );
