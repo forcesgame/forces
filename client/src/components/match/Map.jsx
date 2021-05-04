@@ -56,27 +56,26 @@ const Tile = ({ tile, onClick }) => {
 };
 
 function Map({ match, user }) {
-  const [selectedUnit, setSelectedUnit] = useState({});
+  const [renderTiles, setRenderTiles] = useState([]);
+  const [selectedUnit, setSelectedUnit] = useState(null);
+  const [tileFrom, setTileFrom] = useState(null);
+  const [tileTo, setTileTo] = useState(null);
   const [tiles, setTiles] = useState([]);
 
   const onClick = (event) => {
     const tileID = event.target.value;
-    const _tiles = match.tiles.flat();
-    const tile = _tiles.find((_tile) => _tile._id === tileID);
+    const tile = tiles.find((_tile) => _tile._id === tileID);
 
     if (tile.unit) {
       const unitOwnerID = tile.unit.user._id;
+      const { unit } = tile;
 
       if (unitOwnerID === user._id) {
-        console.log('That\'s one of your units.');
-        setSelectedUnit(tile.unit);
-      } else {
-        console.log('That\'s not your unit!');
-        setSelectedUnit(null);
+        setSelectedUnit(unit);
+        setTileFrom(tile);
       }
     } else {
-      console.log('You clicked on a tile, but there\'s no unit there...');
-      setSelectedUnit(null);
+      setTileTo(tile);
     }
   };
 
@@ -88,36 +87,54 @@ function Map({ match, user }) {
   };
 
   useEffect(() => {
+    if (tiles.length !== 0) return;
     initializeTiles();
   }, [match]);
 
   useEffect(() => {
-    console.log('selected unit:');
-    console.log(selectedUnit);
-    console.log(tiles);
-  }, [selectedUnit]);
+    if (!tileFrom || !selectedUnit) return;
+    if (!tileTo) return;
 
-  if (!match || !user) {
-    return (
-      <></>
-    );
-  }
+    const newTiles = [...tiles];
 
-  const renderTiles = (_tiles) => {
-    const renderedTiles = [];
+    for (let i = 0; i < newTiles.length; i += 1) {
+      const tile = newTiles[i];
+      if (tile._id === tileFrom._id) {
+        tile.unit = null;
+        setTileFrom(null);
+      }
+
+      if (tile._id === tileTo._id) {
+        tile.unit = selectedUnit;
+        setTileTo(null);
+        setSelectedUnit(null);
+      }
+    }
+
+    setTiles(newTiles);
+  }, [tileTo]);
+
+  useEffect(() => {
+    const _renderTiles = [];
     for (let i = 0; i < tiles.length; i += 1) {
-      renderedTiles.push(
+      _renderTiles.push(
         <div key={i}>
           <Tile
-            tile={_tiles[i]}
+            tile={tiles[i]}
             onClick={onClick}
           />
         </div>,
       );
     }
 
-    return renderedTiles;
-  };
+    setRenderTiles(_renderTiles);
+  }, [tiles]);
+
+  if (!match || !user) {
+    return (
+      <></>
+    );
+  }
 
   return (
     <div style={{
@@ -128,7 +145,7 @@ function Map({ match, user }) {
       gridTemplateRows: 'repeat(8, 1fr)',
     }}
     >
-      {renderTiles(tiles)}
+      {renderTiles}
     </div>
   );
 }
