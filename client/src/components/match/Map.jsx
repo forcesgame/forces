@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Unit = ({ unit }) => {
   let emoji = '';
@@ -56,45 +56,66 @@ const Tile = ({ tile, onClick }) => {
 };
 
 function Map({ match, user }) {
-  if (!match || !user) {
-    return (
-      <></>
-    );
-  }
+  const [selectedUnit, setSelectedUnit] = useState({});
+  const [tiles, setTiles] = useState([]);
 
   const onClick = (event) => {
     const tileID = event.target.value;
-    const tiles = match.tiles.flat();
-    const tile = tiles.find((_tile) => _tile._id === tileID);
+    const _tiles = match.tiles.flat();
+    const tile = _tiles.find((_tile) => _tile._id === tileID);
 
     if (tile.unit) {
       const unitOwnerID = tile.unit.user._id;
 
       if (unitOwnerID === user._id) {
         console.log('That\'s one of your units.');
+        setSelectedUnit(tile.unit);
       } else {
         console.log('That\'s not your unit!');
+        setSelectedUnit(null);
       }
     } else {
       console.log('You clicked on a tile, but there\'s no unit there...');
+      setSelectedUnit(null);
     }
   };
 
-  const tiles = [];
-  let key = 0;
+  const initializeTiles = () => {
+    if (!match) return;
 
-  match.tiles.flat().forEach((tile) => {
-    tiles.push(
-      <div key={key}>
-        <Tile
-          tile={tile}
-          onClick={onClick}
-        />
-      </div>,
+    const _tiles = [];
+    let key = 0;
+
+    match.tiles.flat().forEach((tile) => {
+      _tiles.push(
+        <div key={key}>
+          <Tile
+            tile={tile}
+            onClick={onClick}
+          />
+        </div>,
+      );
+
+      key += 1;
+    });
+
+    setTiles(_tiles);
+  };
+
+  useEffect(() => {
+    initializeTiles();
+  }, [match]);
+
+  useEffect(() => {
+    console.log('selected unit:');
+    console.log(selectedUnit);
+  }, [selectedUnit]);
+
+  if (!match || !user) {
+    return (
+      <></>
     );
-
-    key += 1;
-  });
+  }
 
   return (
     <div style={{
