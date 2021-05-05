@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const Unit = ({ unit }) => {
   let emoji = '';
+  let stats = '';
 
   if (!unit || !unit.type) {
     emoji = '';
@@ -13,13 +14,21 @@ const Unit = ({ unit }) => {
     emoji = '✊️';
   }
 
+  if (unit) {
+    const { health, rating, stamina } = unit;
+    stats = `${health} | ${rating} | ${stamina}`;
+  }
+
   return (
     <div style={{
-      fontSize: '5vmin',
+      fontSize: '4vmin',
       pointerEvents: 'none',
     }}
     >
       {emoji}
+      <div style={{ fontSize: '1.5vmin' }}>
+        {stats}
+      </div>
     </div>
   );
 };
@@ -87,9 +96,9 @@ function Map({
       if (unitOwnerID === user._id) {
         setSelectedUnit(unit);
         setTileFrom(tile);
-        setSystemMessage(`Selected Unit: Type: ${unitType} | 
-        Health: ${health} | 
-        Rating: ${rating} | 
+        setSystemMessage(`Selected Unit: Type: ${unitType} |
+        Health: ${health} |
+        Rating: ${rating} |
         Stamina: ${stamina}`);
       } else {
         setSelectedUnit(null);
