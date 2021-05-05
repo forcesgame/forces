@@ -72,6 +72,16 @@ const Tile = ({ tile, onClick }) => {
   );
 };
 
+function isValidMove(from, to) {
+  if (from.x === to.x) {
+    return (Math.abs(from.y - to.y) === 1);
+  } if (from.y === to.y) {
+    return (Math.abs(from.x - to.x) === 1);
+  }
+
+  return false;
+}
+
 function Map({
   match, user, setMatchTiles, setSystemMessage,
 }) {
@@ -126,6 +136,11 @@ function Map({
   useEffect(() => {
     if (!tileFrom || !selectedUnit) return;
     if (!tileTo) return;
+
+    if (!isValidMove(tileFrom, tileTo)) {
+      setSystemMessage('Invalid move.');
+      return;
+    }
 
     // deep copy
     const newTiles = [...tiles];
