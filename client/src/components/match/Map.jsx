@@ -1,124 +1,153 @@
 import React, { useEffect, useState } from 'react';
-import Table from 'react-bootstrap/Table';
 
-const MapTile = ({ tile }) => {
-  const [background, setBackground] = useState('');
-  const [emoji, setEmoji] = useState('');
+const Unit = ({ unit }) => {
+  let emoji = '';
 
-  const typeToBackground = (type) => {
-    if (!type) return '';
-    if (type === 'ROAD') return 'lightgrey';
-    if (type === 'FOREST') return 'lightgreen';
-    if (type === 'PLAINS') return 'tan';
-    return '';
+  if (!unit || !unit.type) {
+    emoji = '';
+  } else if (unit.type === 'INFANTRY') {
+    emoji = '✌️';
+  } else if (unit.type === 'BAZOOKA') {
+    emoji = '🖐️️️';
+  } else if (unit.type === 'TANK') {
+    emoji = '✊️';
+  }
+
+  return (
+    <div style={{
+      fontSize: '5vmin',
+      pointerEvents: 'none',
+    }}
+    >
+      {emoji}
+    </div>
+  );
+};
+
+const Tile = ({ tile, onClick }) => {
+  const { type, unit } = tile;
+  let backgroundColor = '';
+
+  if (type === 'ROAD') {
+    backgroundColor = 'lightgrey';
+  } else if (type === 'FOREST') {
+    backgroundColor = 'lightgreen';
+  } else if (type === 'PLAINS') {
+    backgroundColor = 'tan';
+  }
+
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        backgroundColor,
+        border: '1px solid',
+        height: '95%',
+        justifyContent: 'center',
+        textAlign: 'center',
+        width: '95%',
+      }}
+      type="button"
+      value={tile._id}
+    >
+      <Unit unit={unit} />
+    </button>
+  );
+};
+
+function Map({ match, user }) {
+  const [renderTiles, setRenderTiles] = useState([]);
+  const [selectedUnit, setSelectedUnit] = useState(null);
+  const [tileFrom, setTileFrom] = useState(null);
+  const [tileTo, setTileTo] = useState(null);
+  const [tiles, setTiles] = useState([]);
+
+  const onClick = (event) => {
+    const tileID = event.target.value;
+    const tile = tiles.find((_tile) => _tile._id === tileID);
+
+    if (tile.unit) {
+      const unitOwnerID = tile.unit.user._id;
+      const { unit } = tile;
+
+      if (unitOwnerID === user._id) {
+        setSelectedUnit(unit);
+        setTileFrom(tile);
+      }
+    } else {
+      setTileTo(tile);
+    }
   };
 
-  const unitTypeToEmoji = (type) => {
-    console.log(type);
-    if (!type) return '';
-    if (type === 'INFANTRY') return '🧍';
-    if (type === 'BAZOOKA') return '💣';
-    if (type === 'TANK') return '🚙';
-    return '';
+  const initializeTiles = () => {
+    if (!match) return;
+    const _tiles = [];
+    match.tiles.flat().forEach((tile) => { _tiles.push(tile); });
+    setTiles(_tiles);
   };
 
-  if (!tile) {
+  useEffect(() => {
+    if (tiles.length !== 0) return;
+    initializeTiles();
+  }, [match]);
+
+  useEffect(() => {
+    if (!tileFrom || !selectedUnit) return;
+    if (!tileTo) return;
+
+    const newTiles = [...tiles];
+
+    for (let i = 0; i < newTiles.length; i += 1) {
+      const tile = newTiles[i];
+      if (tile._id === tileFrom._id) {
+        tile.unit = null;
+        setTileFrom(null);
+      }
+
+      if (tile._id === tileTo._id) {
+        tile.unit = selectedUnit;
+        setTileTo(null);
+        setSelectedUnit(null);
+      }
+    }
+
+    setTiles(newTiles);
+  }, [tileTo]);
+
+  useEffect(() => {
+    const _renderTiles = [];
+    for (let i = 0; i < tiles.length; i += 1) {
+      _renderTiles.push(
+        <div key={i}>
+          <Tile
+            tile={tiles[i]}
+            onClick={onClick}
+          />
+        </div>,
+      );
+    }
+
+    setRenderTiles(_renderTiles);
+  }, [tiles]);
+
+  if (!match || !user) {
     return (
       <></>
     );
   }
 
-  useEffect(() => {
-    setBackground(typeToBackground(tile.type));
-    if (tile && tile.unit) {
-      setEmoji(unitTypeToEmoji(tile.unit.type));
-    }
-  }, [tile]);
-
   return (
-    <td style={{ border: '2px solid black', background }}>
-      {tile.type}
-      <br />
-      {/* {tile._id} */}
-      {/* <GetTileId tile={tile} /> */}
-      <br />
-      {tile.unit ? `${tile.unit.user.username}'s ${emoji}` : ''}
-    </td>
-  );
-};
-
-const MapRow = ({ row }) => {
-  const tiles = row.map((tile) => (
-    <MapTile
-      key={tile._id}
-      tile={tile}
-    />
-  ));
-
-  return (
-    <tr>
-      {tiles}
-    </tr>
-  );
-};
-
-function Map({ initialMatch }) {
-  const [match, setMatch] = useState({});
-  const [mapRows, setMapRows] = useState([]);
-
-  const initializeMatch = async () => {
-    if (!initialMatch) return;
-    setMatch(initialMatch);
-  };
-
-  const initializeMapRows = async () => {
-    if (!match) return;
-    const { tiles } = match;
-    if (!tiles) return;
-    let rowIndex = -1;
-    setMapRows(
-      tiles.map((row) => {
-        rowIndex += 1;
-        return (
-          <MapRow
-            key={rowIndex}
-            row={row}
-          />
-        );
-      }),
-    );
-  };
-
-  useEffect(() => {
-    initializeMatch();
-  }, [initialMatch]);
-
-  useEffect(() => {
-    initializeMapRows();
-  }, [match]);
-
-  if (!mapRows) {
-    return (
-      <h1>Loading...</h1>
-    );
-  }
-
-  return (
-    <Table>
-      <tbody>
-        {mapRows}
-      </tbody>
-    </Table>
+    <div style={{
+      width: '100%',
+      height: '100%',
+      display: 'grid',
+      gridTemplateColumns: 'repeat(8, 1fr)',
+      gridTemplateRows: 'repeat(8, 1fr)',
+    }}
+    >
+      {renderTiles}
+    </div>
   );
 }
-
-// obtain the tile._id based on the tile  provided
-// function GetTileId({ tile }) {
-//   const tileId = `${tile._id}`;
-//
-//   return (
-//     tileId
-//   );
-// }
 
 export default Map;
