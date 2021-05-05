@@ -27,6 +27,7 @@ const Unit = ({ unit }) => {
 const Tile = ({ tile, onClick }) => {
   const { type, unit } = tile;
   let backgroundColor = '';
+  let cursor = '';
 
   if (type === 'ROAD') {
     backgroundColor = 'lightgrey';
@@ -36,6 +37,12 @@ const Tile = ({ tile, onClick }) => {
     backgroundColor = 'tan';
   }
 
+  if (onClick === null) {
+    cursor = 'not-allowed';
+  } else {
+    cursor = 'pointer';
+  }
+
   return (
     <button
       onClick={onClick}
@@ -43,6 +50,7 @@ const Tile = ({ tile, onClick }) => {
         alignSelf: 'center',
         backgroundColor,
         border: '1px solid',
+        cursor,
         height: '100%',
         justifySelf: 'center',
         width: '100%',
@@ -138,18 +146,19 @@ function Map({
 
   useEffect(() => {
     const _renderTiles = [];
+
     for (let i = 0; i < tiles.length; i += 1) {
       _renderTiles.push(
         <Tile
           key={i}
           tile={tiles[i]}
-          onClick={onClick}
+          onClick={match?.currentTurn._id === user?._id ? onClick : null}
         />,
       );
     }
 
     setRenderTiles(_renderTiles);
-  }, [tiles]);
+  }, [match, tiles]);
 
   if (!match || !user) {
     return (
