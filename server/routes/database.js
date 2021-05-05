@@ -93,7 +93,7 @@ async function initializeUnits() {
   await generateDefaultUnits(otherpatrick);
 }
 
-async function generateRandomTile(unit) {
+async function generateRandomTile(unit, row, col) {
   const types = ['PLAINS', 'ROAD', 'FOREST'];
   const staminaCosts = [1, 0.5, 2];
   const randomIndex = Math.floor(Math.random() * types.length);
@@ -102,18 +102,20 @@ async function generateRandomTile(unit) {
     staminaCost: staminaCosts[randomIndex],
     type: types[randomIndex],
     unit,
+    x: col,
+    y: row,
   });
 
   await tile.save();
   return tile;
 }
 
-async function generateTileRow() {
+async function generateTileRow(rowIndex) {
   const defaultRowWidth = 8;
   const row = [];
 
   for (let i = 0; i < defaultRowWidth; i += 1) {
-    const tile = await generateRandomTile(null);
+    const tile = await generateRandomTile(null, rowIndex, i);
     row.push(tile._id);
   }
 
@@ -128,7 +130,7 @@ async function generateMatch(user1ID, user2ID) {
   const tiles = [];
 
   for (let i = 0; i < defaultColumnHeight; i += 1) {
-    tiles.push(await generateTileRow());
+    tiles.push(await generateTileRow(i));
   }
 
   const topRow = tiles[0];

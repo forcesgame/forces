@@ -7,6 +7,8 @@ const tileSchema = Schema({
     enum: ['PLAINS', 'ROAD', 'FOREST', 'MOUNTAINS'],
   },
   unit: { type: Schema.Types.ObjectId, ref: 'Unit' },
+  x: Number,
+  y: Number,
 });
 
 function populateTile() {
