@@ -104,4 +104,37 @@ router.post('/matches', async (req, res) => {
   }
 });
 
+router.patch('/matches/:id', async (req, res) => {
+  try {
+    const match = await Match.findOne({ _id: req.params.id });
+
+    if (!match) {
+      res.status(400);
+      res.send({
+        type: 'https://forcesgame.com/probs/missing-resource',
+        title: 'Resource to update missing',
+      });
+    }
+
+    if (req.body.currentTurn) {
+      match.currentTurn = req.body.currentTurn;
+    }
+
+    await match.save();
+
+    /*
+    we use findOne over findById as query middleware (necessary for pre hook
+    population (see Tile.js)) is unsupported for findById
+     */
+    res.send(await Match.findOne({ _id: req.params.id }));
+  } catch (error) {
+    res.status(400);
+    res.send({
+      type: 'https://forcesgame.com/probs/unspecified-problem',
+      title: 'Unspecified problem',
+      error,
+    });
+  }
+});
+
 module.exports = router;

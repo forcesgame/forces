@@ -525,6 +525,36 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "PATCH /matches/id",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"currentTurn\": \"<insert-id-here>\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/matches/{id}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"matches",
+								"{id}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
