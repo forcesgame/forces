@@ -2,9 +2,40 @@ import axios from 'axios';
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import React, { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import { useMutation, useQuery } from 'react-query';
 
-import { useQuery } from 'react-query';
 import Map from '../components/match/Map';
+
+const TurnButton = ({ currentTurn, currentUser, endTurn }) => {
+  const [buttonText, setButtonText] = useState('End Turn');
+
+  if (currentTurn !== currentUser) {
+    if (buttonText === 'Ending turn...') setButtonText('End Turn');
+    return (
+      <Button
+        className="mt-1"
+        disabled
+        variant="secondary"
+      >
+        Opponent&apos;s turn...
+      </Button>
+    );
+  }
+
+  return (
+    <Form onSubmit={endTurn}>
+      <Button
+        className="mt-1"
+        onClick={() => { setButtonText('Ending turn...'); }}
+        type="submit"
+      >
+        {buttonText}
+      </Button>
+    </Form>
+  );
+};
 
 function Match() {
   const auth0User = useAuth0().user;
@@ -30,9 +61,32 @@ function Match() {
     enabled: !!user.data,
   });
 
+  const matchMutationEndTurn = useMutation(async () => {
+    const currentUserID = user.data._id;
+    const matchID = match.data._id;
+    const user1ID = match.data.user1._id;
+    const user2ID = match.data.user2._id;
+    let opponentID;
+
+    if (currentUserID === user1ID) {
+      opponentID = user2ID;
+    } else {
+      opponentID = user1ID;
+    }
+
+    await axios.patch(`/api/matches/${matchID}`, {
+      currentTurn: opponentID,
+    });
+  });
+
   useEffect(() => {
     initializeAuth0Username();
   }, [auth0User]);
+
+  const endTurn = async (event) => {
+    event.preventDefault();
+    await matchMutationEndTurn.mutate({});
+  };
 
   if (user.isLoading || match.isLoading) {
     return (
@@ -65,10 +119,15 @@ function Match() {
   }
 
   return (
-    <Container style={{ width: '85vmin', height: '85vmin' }} className="mt-5">
+    <Container style={{ width: '85vmin', height: '85vmin' }} className="p-5">
       <Map
         match={match.data}
         user={user.data}
+      />
+      <TurnButton
+        currentUser={user.data?.username}
+        currentTurn={match.data?.currentTurn.username}
+        endTurn={endTurn}
       />
     </Container>
   );
