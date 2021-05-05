@@ -40,6 +40,7 @@ const TurnButton = ({ currentTurn, currentUser, endTurn }) => {
 function Match() {
   const auth0User = useAuth0().user;
   const [auth0Username, setAuth0Username] = useState('');
+  const [matchTiles, setMatchTiles] = useState([]);
   const [systemMessage, setSystemMessage] = useState('Nothing selected...');
 
   const initializeAuth0Username = async () => {
@@ -77,6 +78,7 @@ function Match() {
 
     await axios.patch(`/api/matches/${matchID}`, {
       currentTurn: opponentID,
+      tiles: matchTiles,
     });
   });
 
@@ -127,6 +129,7 @@ function Match() {
       <Map
         match={match.data}
         user={user.data}
+        setMatchTiles={setMatchTiles}
         setSystemMessage={setSystemMessage}
       />
       <TurnButton

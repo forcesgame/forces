@@ -1,7 +1,9 @@
+/* eslint-disable no-await-in-loop */
 const express = require('express');
 
 const router = express.Router();
 const Match = require('../models/Match');
+const Tile = require('../models/Tile');
 const Utilities = require('./database');
 
 /**
@@ -118,6 +120,17 @@ router.patch('/matches/:id', async (req, res) => {
 
     if (req.body.currentTurn) {
       match.currentTurn = req.body.currentTurn;
+    }
+
+    // TODO only update tile if change occurred ("change differential")
+    if (req.body.tiles) {
+      const { tiles } = req.body;
+      for (let i = 0; i < tiles.length; i += 1) {
+        const tile = await Tile.findById(tiles[i]._id);
+        tile.unit = tiles[i].unit;
+
+        await tile.save();
+      }
     }
 
     await match.save();

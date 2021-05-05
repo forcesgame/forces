@@ -55,7 +55,9 @@ const Tile = ({ tile, onClick }) => {
   );
 };
 
-function Map({ match, user, setSystemMessage }) {
+function Map({
+  match, user, setMatchTiles, setSystemMessage,
+}) {
   const [renderTiles, setRenderTiles] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [tileFrom, setTileFrom] = useState(null);
@@ -101,6 +103,7 @@ function Map({ match, user, setSystemMessage }) {
     if (!tileFrom || !selectedUnit) return;
     if (!tileTo) return;
 
+    // deep copy
     const newTiles = [...tiles];
 
     for (let i = 0; i < newTiles.length; i += 1) {
@@ -118,6 +121,18 @@ function Map({ match, user, setSystemMessage }) {
     }
 
     setTiles(newTiles);
+
+    // shallow copy...i think
+    const matchTiles = newTiles.map((tile) => ({ ...tile }));
+
+    // "unpopulate" units
+    for (let i = 0; i < matchTiles.length; i += 1) {
+      const tile = matchTiles[i];
+      if (tile.unit) {
+        tile.unit = tile.unit._id;
+      }
+    }
+    setMatchTiles(matchTiles);
     setSystemMessage('Unit moved!');
   }, [tileTo]);
 
