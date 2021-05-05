@@ -40,12 +40,12 @@ const Tile = ({ tile, onClick }) => {
     <button
       onClick={onClick}
       style={{
+        alignSelf: 'center',
         backgroundColor,
         border: '1px solid',
-        height: '95%',
-        justifyContent: 'center',
-        textAlign: 'center',
-        width: '95%',
+        height: '100%',
+        justifySelf: 'center',
+        width: '100%',
       }}
       type="button"
       value={tile._id}
@@ -118,12 +118,11 @@ function Map({ match, user }) {
     const _renderTiles = [];
     for (let i = 0; i < tiles.length; i += 1) {
       _renderTiles.push(
-        <div key={i}>
-          <Tile
-            tile={tiles[i]}
-            onClick={onClick}
-          />
-        </div>,
+        <Tile
+          key={i}
+          tile={tiles[i]}
+          onClick={onClick}
+        />,
       );
     }
 
@@ -138,11 +137,14 @@ function Map({ match, user }) {
 
   return (
     <div style={{
+      alignItems: 'center',
       width: '100%',
       height: '100%',
       display: 'grid',
+      gap: '5px 5px',
       gridTemplateColumns: 'repeat(8, 1fr)',
       gridTemplateRows: 'repeat(8, 1fr)',
+      justifyItems: 'center',
     }}
     >
       {renderTiles}
