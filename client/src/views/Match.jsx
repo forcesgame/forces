@@ -41,7 +41,7 @@ function Match() {
   const auth0User = useAuth0().user;
   const [auth0Username, setAuth0Username] = useState('');
   const [matchTiles, setMatchTiles] = useState([]);
-  const [systemMessage, setSystemMessage] = useState('Nothing selected...');
+  const [systemMessage, setSystemMessage] = useState('...');
 
   const initializeAuth0Username = async () => {
     if (!auth0User) return;
@@ -124,7 +124,7 @@ function Match() {
   return (
     <Container style={{ width: '85vmin', height: '85vmin' }} className="p-5">
       <span>
-        {`System Message: ${systemMessage}`}
+        {systemMessage}
       </span>
       <Map
         match={match.data}

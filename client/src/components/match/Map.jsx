@@ -79,11 +79,18 @@ function Map({
     if (tile.unit) {
       const unitOwnerID = tile.unit.user._id;
       const { unit } = tile;
+      const unitType = unit.type.replace(
+        /\w\S*/g, (string) => string.charAt(0).toUpperCase() + string.substr(1).toLowerCase(),
+      );
+      const { health, rating, stamina } = unit;
 
       if (unitOwnerID === user._id) {
         setSelectedUnit(unit);
         setTileFrom(tile);
-        setSystemMessage('Selected one of your units...');
+        setSystemMessage(`Selected Unit: Type: ${unitType} | 
+        Health: ${health} | 
+        Rating: ${rating} | 
+        Stamina: ${stamina}`);
       } else {
         setSelectedUnit(null);
         setTileFrom(null);
@@ -91,7 +98,7 @@ function Map({
       }
     } else {
       setTileTo(tile);
-      setSystemMessage('Nothing selected...');
+      setSystemMessage('...');
     }
   };
 
