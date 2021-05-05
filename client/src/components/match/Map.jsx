@@ -55,7 +55,7 @@ const Tile = ({ tile, onClick }) => {
   );
 };
 
-function Map({ match, user }) {
+function Map({ match, user, setSystemMessage }) {
   const [renderTiles, setRenderTiles] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [tileFrom, setTileFrom] = useState(null);
@@ -73,9 +73,15 @@ function Map({ match, user }) {
       if (unitOwnerID === user._id) {
         setSelectedUnit(unit);
         setTileFrom(tile);
+        setSystemMessage('Selected one of your units...');
+      } else {
+        setSelectedUnit(null);
+        setTileFrom(null);
+        setSystemMessage('That\'s not your unit!');
       }
     } else {
       setTileTo(tile);
+      setSystemMessage('Nothing selected...');
     }
   };
 
@@ -112,6 +118,7 @@ function Map({ match, user }) {
     }
 
     setTiles(newTiles);
+    setSystemMessage('Unit moved!');
   }, [tileTo]);
 
   useEffect(() => {
