@@ -36,7 +36,7 @@ const Unit = ({ unit }) => {
 const Tile = ({ tile, onClick }) => {
   const { type, unit } = tile;
   let backgroundColor = '';
-  let cursor = '';
+  let cursor;
 
   if (type === 'ROAD') {
     backgroundColor = 'lightgrey';
@@ -72,16 +72,6 @@ const Tile = ({ tile, onClick }) => {
   );
 };
 
-function isValidMove(from, to) {
-  if (from.x === to.x) {
-    return (Math.abs(from.y - to.y) === 1);
-  } if (from.y === to.y) {
-    return (Math.abs(from.x - to.x) === 1);
-  }
-
-  return false;
-}
-
 function Map({
   match, user, setMatchTiles, setSystemMessage,
 }) {
@@ -91,41 +81,12 @@ function Map({
   const [tileTo, setTileTo] = useState(null);
   const [tiles, setTiles] = useState([]);
 
-  const onClick = (event) => {
-    const tileID = event.target.value;
-    const tile = tiles.find((_tile) => _tile._id === tileID);
-
-    if (tile.unit) {
-      const unitOwnerID = tile.unit.user._id;
-      const { unit } = tile;
-      const unitType = unit.type.replace(
-        /\w\S*/g, (string) => string.charAt(0).toUpperCase() + string.substr(1).toLowerCase(),
-      );
-      const { health, rating, stamina } = unit;
-
-      if (unitOwnerID === user._id) {
-        setSelectedUnit(unit);
-        setTileFrom(tile);
-        setSystemMessage(`Selected Unit: Type: ${unitType} |
-        Health: ${health} |
-        Rating: ${rating} |
-        Stamina: ${stamina}`);
-      } else {
-        setSelectedUnit(null);
-        setTileFrom(null);
-        setSystemMessage('That\'s not your unit!');
-      }
-    } else {
-      setTileTo(tile);
-      setSystemMessage('...');
-    }
-  };
-
   const initializeTiles = () => {
     if (!match) return;
-    const _tiles = [];
-    match.tiles.flat().forEach((tile) => { _tiles.push(tile); });
-    setTiles(_tiles);
+    const initialTiles = [];
+    match.tiles.flat().forEach((tile) => { initialTiles.push(tile); });
+
+    setTiles(initialTiles);
   };
 
   useEffect(() => {
@@ -133,15 +94,17 @@ function Map({
     initializeTiles();
   }, [match]);
 
-  useEffect(() => {
-    if (!tileFrom || !selectedUnit) return;
-    if (!tileTo) return;
-
-    if (!isValidMove(tileFrom, tileTo)) {
-      setSystemMessage('Invalid move.');
-      return;
+  const isInvalidMove = (from, to) => {
+    if (from.x === to.x) {
+      return (Math.abs(from.y - to.y) !== 1);
+    } if (from.y === to.y) {
+      return (Math.abs(from.x - to.x) !== 1);
     }
 
+    return true;
+  };
+
+  const updateTiles = () => {
     // deep copy
     const newTiles = [...tiles];
 
@@ -160,35 +123,95 @@ function Map({
     }
 
     setTiles(newTiles);
+  };
 
-    // shallow copy...i think
-    const matchTiles = newTiles.map((tile) => ({ ...tile }));
+  const updateMatchTiles = () => {
+    // shallow copy
+    const newMatchTiles = tiles.map((tile) => ({ ...tile }));
 
     // "unpopulate" units
-    for (let i = 0; i < matchTiles.length; i += 1) {
-      const tile = matchTiles[i];
+    for (let i = 0; i < newMatchTiles.length; i += 1) {
+      const tile = newMatchTiles[i];
       if (tile.unit) {
         tile.unit = tile.unit._id;
       }
     }
-    setMatchTiles(matchTiles);
+
+    setMatchTiles(newMatchTiles);
+  };
+
+  useEffect(() => {
+    if (!selectedUnit || !tileFrom || !tileTo) return;
+
+    if (isInvalidMove(tileFrom, tileTo)) {
+      setSystemMessage('Invalid move.');
+      return;
+    }
+
+    updateTiles();
+    updateMatchTiles();
     setSystemMessage('Unit moved!');
   }, [tileTo]);
 
-  useEffect(() => {
-    const _renderTiles = [];
+  const onClick = (event) => {
+    const tileID = event.target.value;
+    const clickedTile = tiles.find((_tile) => _tile._id === tileID);
+
+    if (clickedTile.unit === null) {
+      setTileTo(clickedTile);
+      setSystemMessage('...');
+    } else {
+      const unitOwnerID = clickedTile.unit.user._id;
+      const { unit } = clickedTile;
+      const { health, rating, stamina } = unit;
+      const unitType = unit.type.replace(
+        /\w\S*/g, (string) => string.charAt(0).toUpperCase()
+          + string.substr(1).toLowerCase(),
+      );
+
+      if (unitOwnerID === user._id) {
+        const selectedUnitInfo = `Selected Unit: Type: ${unitType} |
+        Health: ${health} |
+        Rating: ${rating} |
+        Stamina: ${stamina}`;
+
+        setSelectedUnit(unit);
+        setTileFrom(clickedTile);
+        setSystemMessage(selectedUnitInfo);
+      } else {
+        setSelectedUnit(null);
+        setTileFrom(null);
+        setSystemMessage('That\'s not your unit!');
+      }
+    }
+  };
+
+  const updateRenderTiles = () => {
+    const newRenderTiles = [];
+
+    let onClickFunction;
+
+    if (match?.currentTurn._id === user?._id) {
+      onClickFunction = onClick;
+    } else {
+      onClickFunction = null;
+    }
 
     for (let i = 0; i < tiles.length; i += 1) {
-      _renderTiles.push(
+      newRenderTiles.push(
         <Tile
           key={i}
           tile={tiles[i]}
-          onClick={match?.currentTurn._id === user?._id ? onClick : null}
+          onClick={onClickFunction}
         />,
       );
     }
 
-    setRenderTiles(_renderTiles);
+    setRenderTiles(newRenderTiles);
+  };
+
+  useEffect(() => {
+    updateRenderTiles();
   }, [match, tiles]);
 
   if (!match || !user) {
