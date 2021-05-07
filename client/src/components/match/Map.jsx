@@ -182,6 +182,55 @@ function Map({
         + _string.substr(1).toLowerCase(),
   );
 
+  const getTypeBonusMultiplier = (attacker, defender) => {
+    if (attacker === defender) return 1;
+    if (attacker === 'INFANTRY') {
+      if (defender === 'BAZOOKA') return 1.25;
+      return 0.75;
+    }
+
+    if (attacker === 'BAZOOKA') {
+      if (defender === 'TANK') return 1.25;
+      return 0.75;
+    }
+
+    if (attacker === 'TANK') {
+      if (defender === 'INFANTRY') return 1.25;
+      return 0.75;
+    }
+
+    return 1;
+  };
+
+  const attackUnitOn = (clickedTile) => {
+    const attacker = selectedUnit;
+    const defender = clickedTile.unit;
+
+    const attackerBaseDamage = 10 * attacker.rating;
+    const defenderBaseDamage = 10 * defender.rating;
+
+    const attackerTypeBonus = getTypeBonusMultiplier(attacker.type, defender.type);
+    const defenderTypeBonus = getTypeBonusMultiplier(defender.type, attacker.type);
+
+    const attackerHealthBonus = attacker.health / attacker.maxHealth;
+    const defenderHealthBonus = defender.health / defender.maxHealth;
+
+    const attackerLuck = Math.floor(Math.random() * 10) + 1;
+    const defenderLuck = Math.floor(Math.random() * 10) + 1;
+
+    const attackerDamage = Math.floor(attackerBaseDamage * attackerTypeBonus * attackerHealthBonus
+      + attackerLuck);
+    const defenderDamage = Math.floor(defenderBaseDamage * defenderTypeBonus * defenderHealthBonus
+      + defenderLuck);
+
+    attacker.health -= defenderDamage;
+    defender.health -= attackerDamage;
+
+    setSystemMessage(`Attacker dealt ${attackerDamage} damage,
+        Defender dealt ${defenderDamage} damage
+        `);
+  };
+
   const onClick = (event) => {
     const tileID = event.target.value;
     const clickedTile = tiles.find((_tile) => _tile._id === tileID);
@@ -221,6 +270,14 @@ function Map({
         setSelectedUnit(unit);
         setTileFrom(clickedTile);
         setSystemMessage(selectedUnitInfo);
+      } else if (selectedUnit) {
+        if (isInvalidMove(tileFrom, clickedTile)) {
+          setSystemMessage('Invalid move.');
+          return;
+        }
+
+        attackUnitOn(clickedTile);
+        setSelectedUnit(null);
       } else {
         setSelectedUnit(null);
         setTileFrom(null);
