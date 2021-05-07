@@ -90,7 +90,7 @@ function Map({
   };
 
   useEffect(() => {
-    if (tiles.length !== 0) return;
+    if (tiles.length !== 0 && match?.currentTurn._id === user?._id) return;
     initializeTiles();
   }, [match]);
 
@@ -117,8 +117,12 @@ function Map({
 
       if (tile._id === tileTo._id) {
         tile.unit = selectedUnit;
+        tile.unit.stamina -= tile.staminaCost;
+        if (tile.unit.stamina < 0) tile.unit.stamina = 0;
+
         setTileTo(null);
         setSelectedUnit(null);
+        setSystemMessage('Unit moved!');
       }
     }
 
@@ -148,9 +152,13 @@ function Map({
       return;
     }
 
+    if (selectedUnit.stamina <= 0) {
+      setSystemMessage('That unit is out of stamina!');
+      return;
+    }
+
     updateTiles();
     updateMatchTiles();
-    setSystemMessage('Unit moved!');
   }, [tileTo]);
 
   const onClick = (event) => {
