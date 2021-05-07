@@ -34,8 +34,9 @@ const Unit = ({ unit }) => {
 };
 
 const Tile = ({ tile, onClick }) => {
-  const { type, unit } = tile;
+  const { isSelected, type, unit } = tile;
   let backgroundColor = '';
+  let border;
   let cursor;
 
   if (type === 'ROAD') {
@@ -44,6 +45,12 @@ const Tile = ({ tile, onClick }) => {
     backgroundColor = 'lightgreen';
   } else if (type === 'PLAINS') {
     backgroundColor = 'tan';
+  }
+
+  if (isSelected) {
+    border = '2px solid';
+  } else {
+    border = '1px solid';
   }
 
   if (onClick === null) {
@@ -58,7 +65,7 @@ const Tile = ({ tile, onClick }) => {
       style={{
         alignSelf: 'center',
         backgroundColor,
-        border: '1px solid',
+        border,
         cursor,
         height: '100%',
         justifySelf: 'center',
@@ -147,13 +154,13 @@ function Map({
   useEffect(() => {
     if (!selectedUnit || !tileFrom || !tileTo) return;
 
-    if (isInvalidMove(tileFrom, tileTo)) {
-      setSystemMessage('Invalid move.');
+    if (selectedUnit.stamina <= 0) {
+      setSystemMessage('That unit is out of stamina!');
       return;
     }
 
-    if (selectedUnit.stamina <= 0) {
-      setSystemMessage('That unit is out of stamina!');
+    if (isInvalidMove(tileFrom, tileTo)) {
+      setSystemMessage('Invalid move.');
       return;
     }
 
@@ -176,6 +183,13 @@ function Map({
         /\w\S*/g, (string) => string.charAt(0).toUpperCase()
           + string.substr(1).toLowerCase(),
       );
+
+      if (selectedUnit && unit._id === selectedUnit._id) {
+        setSelectedUnit(null);
+        setTileFrom(null);
+        setSystemMessage('...');
+        return;
+      }
 
       if (unitOwnerID === user._id) {
         const selectedUnitInfo = `Selected Unit: Type: ${unitType} |
@@ -206,10 +220,22 @@ function Map({
     }
 
     for (let i = 0; i < tiles.length; i += 1) {
+      const tile = tiles[i];
+
+      if (tile.unit && selectedUnit) {
+        if (tile.unit._id === selectedUnit._id) {
+          tile.isSelected = true;
+        } else {
+          tile.isSelected = false;
+        }
+      } else {
+        tile.isSelected = false;
+      }
+
       newRenderTiles.push(
         <Tile
           key={i}
-          tile={tiles[i]}
+          tile={tile}
           onClick={onClickFunction}
         />,
       );
@@ -220,7 +246,7 @@ function Map({
 
   useEffect(() => {
     updateRenderTiles();
-  }, [match, tiles]);
+  }, [match, selectedUnit, tileFrom, tileTo, tiles]);
 
   if (!match || !user) {
     return (
