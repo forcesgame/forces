@@ -34,8 +34,9 @@ const Unit = ({ unit }) => {
 };
 
 const Tile = ({ tile, onClick }) => {
-  const { type, unit } = tile;
+  const { isSelected, type, unit } = tile;
   let backgroundColor = '';
+  let border;
   let cursor;
 
   if (type === 'ROAD') {
@@ -44,6 +45,12 @@ const Tile = ({ tile, onClick }) => {
     backgroundColor = 'lightgreen';
   } else if (type === 'PLAINS') {
     backgroundColor = 'tan';
+  }
+
+  if (isSelected) {
+    border = '2px solid';
+  } else {
+    border = '1px solid';
   }
 
   if (onClick === null) {
@@ -58,7 +65,7 @@ const Tile = ({ tile, onClick }) => {
       style={{
         alignSelf: 'center',
         backgroundColor,
-        border: '1px solid',
+        border,
         cursor,
         height: '100%',
         justifySelf: 'center',
@@ -97,7 +104,9 @@ function Map({
   const isInvalidMove = (from, to) => {
     if (from.x === to.x) {
       return (Math.abs(from.y - to.y) !== 1);
-    } if (from.y === to.y) {
+    }
+
+    if (from.y === to.y) {
       return (Math.abs(from.x - to.x) !== 1);
     }
 
@@ -147,13 +156,13 @@ function Map({
   useEffect(() => {
     if (!selectedUnit || !tileFrom || !tileTo) return;
 
-    if (isInvalidMove(tileFrom, tileTo)) {
-      setSystemMessage('Invalid move.');
+    if (selectedUnit.stamina <= 0) {
+      setSystemMessage('That unit is out of stamina!');
       return;
     }
 
-    if (selectedUnit.stamina <= 0) {
-      setSystemMessage('That unit is out of stamina!');
+    if (isInvalidMove(tileFrom, tileTo)) {
+      setSystemMessage('Invalid move.');
       return;
     }
 
@@ -161,23 +170,98 @@ function Map({
     updateMatchTiles();
   }, [tileTo]);
 
+  const resetSelection = () => {
+    setSelectedUnit(null);
+    setTileFrom(null);
+    setTileTo(null);
+    setSystemMessage('...');
+  };
+
+  const toTitleCase = (string) => string.replace(
+    /\w\S*/g, (_string) => _string.charAt(0).toUpperCase()
+        + _string.substr(1).toLowerCase(),
+  );
+
+  const getTypeBonusMultiplier = (attacker, defender) => {
+    if (attacker === defender) return 1;
+    if (attacker === 'INFANTRY') {
+      if (defender === 'BAZOOKA') return 1.25;
+      return 0.75;
+    }
+
+    if (attacker === 'BAZOOKA') {
+      if (defender === 'TANK') return 1.25;
+      return 0.75;
+    }
+
+    if (attacker === 'TANK') {
+      if (defender === 'INFANTRY') return 1.25;
+      return 0.75;
+    }
+
+    return 1;
+  };
+
+  const attackUnitOn = (clickedTile) => {
+    const attacker = selectedUnit;
+    const defender = clickedTile.unit;
+
+    const attackerBaseDamage = 10 * attacker.rating;
+    const defenderBaseDamage = 10 * defender.rating;
+
+    const attackerTypeBonus = getTypeBonusMultiplier(attacker.type, defender.type);
+    const defenderTypeBonus = getTypeBonusMultiplier(defender.type, attacker.type);
+
+    const attackerHealthBonus = attacker.health / attacker.maxHealth;
+    const defenderHealthBonus = defender.health / defender.maxHealth;
+
+    const attackerLuck = Math.floor(Math.random() * 10) + 1;
+    const defenderLuck = Math.floor(Math.random() * 10) + 1;
+
+    const attackerDamage = Math.floor(attackerBaseDamage * attackerTypeBonus * attackerHealthBonus
+      + attackerLuck);
+    const defenderDamage = Math.floor(defenderBaseDamage * defenderTypeBonus * defenderHealthBonus
+      + defenderLuck);
+
+    attacker.health -= defenderDamage;
+    defender.health -= attackerDamage;
+
+    setSystemMessage(`Attacker dealt ${attackerDamage} damage,
+        Defender dealt ${defenderDamage} damage
+        `);
+  };
+
   const onClick = (event) => {
     const tileID = event.target.value;
     const clickedTile = tiles.find((_tile) => _tile._id === tileID);
 
     if (clickedTile.unit === null) {
+      if (tileTo && clickedTile._id === tileTo._id) {
+        resetSelection();
+        return;
+      }
+
       setTileTo(clickedTile);
-      setSystemMessage('...');
-    } else {
+
+      if (selectedUnit) return;
+
+      const tileType = toTitleCase(clickedTile.type);
+      const selectedTileInfo = `Selected Tile: Type: ${tileType} |
+      Stamina Cost: ${clickedTile.staminaCost}`;
+
+      setSystemMessage(selectedTileInfo);
+    } else { // unit on tile
       const unitOwnerID = clickedTile.unit.user._id;
       const { unit } = clickedTile;
-      const { health, rating, stamina } = unit;
-      const unitType = unit.type.replace(
-        /\w\S*/g, (string) => string.charAt(0).toUpperCase()
-          + string.substr(1).toLowerCase(),
-      );
+
+      if (selectedUnit && unit._id === selectedUnit._id) {
+        resetSelection();
+        return;
+      }
 
       if (unitOwnerID === user._id) {
+        const { health, rating, stamina } = unit;
+        const unitType = toTitleCase(unit.type);
         const selectedUnitInfo = `Selected Unit: Type: ${unitType} |
         Health: ${health} |
         Rating: ${rating} |
@@ -186,6 +270,14 @@ function Map({
         setSelectedUnit(unit);
         setTileFrom(clickedTile);
         setSystemMessage(selectedUnitInfo);
+      } else if (selectedUnit) {
+        if (isInvalidMove(tileFrom, clickedTile)) {
+          setSystemMessage('Invalid move.');
+          return;
+        }
+
+        attackUnitOn(clickedTile);
+        setSelectedUnit(null);
       } else {
         setSelectedUnit(null);
         setTileFrom(null);
@@ -206,10 +298,20 @@ function Map({
     }
 
     for (let i = 0; i < tiles.length; i += 1) {
+      const tile = tiles[i];
+
+      if (tile.unit && selectedUnit) {
+        tile.isSelected = tile.unit._id === selectedUnit._id;
+      } else if (tileTo && tile._id === tileTo._id && !selectedUnit) {
+        tile.isSelected = true;
+      } else {
+        tile.isSelected = false;
+      }
+
       newRenderTiles.push(
         <Tile
           key={i}
-          tile={tiles[i]}
+          tile={tile}
           onClick={onClickFunction}
         />,
       );
@@ -220,7 +322,7 @@ function Map({
 
   useEffect(() => {
     updateRenderTiles();
-  }, [match, tiles]);
+  }, [match, selectedUnit, tileFrom, tileTo, tiles]);
 
   if (!match || !user) {
     return (
