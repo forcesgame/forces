@@ -41,6 +41,7 @@ function Match() {
   const auth0User = useAuth0().user;
   const [auth0Username, setAuth0Username] = useState('');
   const [matchTiles, setMatchTiles] = useState([]);
+  const [matchUnits, setMatchUnits] = useState([]);
   const [systemMessage, setSystemMessage] = useState('...');
 
   const initializeAuth0Username = async () => {
@@ -64,6 +65,8 @@ function Match() {
   });
 
   const matchMutationEndTurn = useMutation(async () => {
+    setSystemMessage('Waiting for opponent...');
+
     const currentUserID = user.data._id;
     const matchID = match.data._id;
     const user1ID = match.data.user1._id;
@@ -75,6 +78,11 @@ function Match() {
     } else {
       opponentID = user1ID;
     }
+
+    await Promise.all(matchUnits.map((unit) => axios.patch(`/api/units/${unit._id}`, {
+      health: unit.health > 0 ? unit.health : 0,
+      stamina: unit.maxStamina,
+    })));
 
     await axios.patch(`/api/matches/${matchID}`, {
       currentTurn: opponentID,
@@ -130,6 +138,7 @@ function Match() {
         match={match.data}
         user={user.data}
         setMatchTiles={setMatchTiles}
+        setMatchUnits={setMatchUnits}
         setSystemMessage={setSystemMessage}
       />
       <TurnButton
