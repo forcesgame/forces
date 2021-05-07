@@ -40,6 +40,8 @@ const TurnButton = ({ currentTurn, currentUser, endTurn }) => {
 function Match() {
   const auth0User = useAuth0().user;
   const [auth0Username, setAuth0Username] = useState('');
+  const [matchTiles, setMatchTiles] = useState([]);
+  const [systemMessage, setSystemMessage] = useState('...');
 
   const initializeAuth0Username = async () => {
     if (!auth0User) return;
@@ -76,6 +78,7 @@ function Match() {
 
     await axios.patch(`/api/matches/${matchID}`, {
       currentTurn: opponentID,
+      tiles: matchTiles,
     });
   });
 
@@ -120,9 +123,14 @@ function Match() {
 
   return (
     <Container style={{ width: '85vmin', height: '85vmin' }} className="p-5">
+      <span>
+        {systemMessage}
+      </span>
       <Map
         match={match.data}
         user={user.data}
+        setMatchTiles={setMatchTiles}
+        setSystemMessage={setSystemMessage}
       />
       <TurnButton
         currentUser={user.data?.username}
