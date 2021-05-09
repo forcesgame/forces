@@ -54,6 +54,7 @@ router.get('/matches/users/:userID', async (req, res) => {
     const match = await Match.findOne({
       $or: [
         { user1: req.params.userID }, { user2: req.params.userID }],
+      inProgress: true,
     });
 
     res.send(match);
