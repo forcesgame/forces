@@ -10,6 +10,10 @@ University during the Spring 2021 semester.
 
 [Node](https://nodejs.org/en/) required.
 
+Forces consists of two apps: an API server and a client app. Code relevant
+to the API server can be found in the root directory and `server`, and
+code relevant to the client app can be found in `client`.
+
 Before running either app, you must have two `.env` files, one placed in the
 root directory and one placed in the `client` directory. These files are
 available on request by [mailing the lead
@@ -22,7 +26,7 @@ npm install
 npm run devStart
 ```
 
-### Starting the UI server
+### Starting the client
 
 ```bash
 cd client
