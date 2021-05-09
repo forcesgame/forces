@@ -133,6 +133,10 @@ router.patch('/matches/:id', async (req, res) => {
       }
     }
 
+    if (req.body.__v) {
+      match.__v = req.body.__v;
+    }
+
     await match.save();
 
     /*

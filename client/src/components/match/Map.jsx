@@ -82,6 +82,7 @@ const Tile = ({ tile, onClick }) => {
 function Map({
   match, user, setMatchTiles, setMatchUnits, setSystemMessage,
 }) {
+  const [matchVersion, setMatchVersion] = useState(-1);
   const [renderTiles, setRenderTiles] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [tileFrom, setTileFrom] = useState(null);
@@ -108,9 +109,10 @@ function Map({
   };
 
   useEffect(() => {
-    if (tiles.length !== 0 && match?.currentTurn._id === user?._id) return;
+    if (match?.__v === matchVersion) return;
     initializeTiles();
     initializeUnits();
+    setMatchVersion(match?.__v);
   }, [match]);
 
   const isInvalidMove = (from, to) => {
@@ -182,6 +184,7 @@ function Map({
 
     if (isInvalidMove(tileFrom, tileTo)) {
       setSystemMessage('Invalid move.');
+      return;
     }
 
     updateTilesAndUnits();

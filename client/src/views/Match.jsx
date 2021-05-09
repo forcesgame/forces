@@ -87,6 +87,7 @@ function Match() {
     await axios.patch(`/api/matches/${matchID}`, {
       currentTurn: opponentID,
       tiles: matchTiles,
+      __v: match.data.__v + 1,
     });
   });
 
