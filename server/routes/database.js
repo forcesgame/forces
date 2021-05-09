@@ -127,6 +127,7 @@ async function generateMatch(user1ID, user2ID) {
 
   const user1ActiveUnits = await Unit.find({ user: user1ID, active: true });
   const user2ActiveUnits = await Unit.find({ user: user2ID, active: true });
+
   const tiles = [];
 
   for (let i = 0; i < defaultColumnHeight; i += 1) {
@@ -135,6 +136,10 @@ async function generateMatch(user1ID, user2ID) {
 
   const topRow = tiles[0];
   for (let i = 0; i < user1ActiveUnits.length; i += 1) {
+    user1ActiveUnits[i].health = user1ActiveUnits[i].maxHealth;
+    user1ActiveUnits[i].stamina = user1ActiveUnits[i].maxStamina;
+    await user1ActiveUnits[i].save();
+
     const tileID = topRow[i];
     const tile = await Tile.findById(tileID);
     tile.unit = user1ActiveUnits[i];
@@ -143,6 +148,10 @@ async function generateMatch(user1ID, user2ID) {
 
   const bottomRow = tiles[7];
   for (let i = 0; i < user2ActiveUnits.length; i += 1) {
+    user2ActiveUnits[i].health = user2ActiveUnits[i].maxHealth;
+    user2ActiveUnits[i].stamina = user2ActiveUnits[i].maxStamina;
+    await user2ActiveUnits[i].save();
+
     const tileID = bottomRow[i];
     const tile = await Tile.findById(tileID);
     tile.unit = user2ActiveUnits[i];
@@ -159,6 +168,25 @@ async function generateMatch(user1ID, user2ID) {
   });
 
   await match.save();
+
+  // ensure users are definitely removed from the queue
+  const queue = await Queue.findOne({});
+  const user1Index = queue.users.findIndex((queueUser) => (
+    JSON.stringify(queueUser._id) === JSON.stringify(user1ID)
+  ));
+  const user2Index = queue.users.findIndex((queueUser) => (
+    JSON.stringify(queueUser._id) === JSON.stringify(user2ID)
+  ));
+
+  if (user1Index !== -1) {
+    queue.users.splice(user1Index, 1);
+    await queue.save();
+  }
+
+  if (user2Index !== -1) {
+    queue.users.splice(user2Index, 1);
+    await queue.save();
+  }
 }
 
 async function initializeMatches() {

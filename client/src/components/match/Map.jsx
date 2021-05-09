@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Unit = ({ unit }) => {
   let emoji = '';
@@ -108,11 +109,55 @@ function Map({
     setUnits(initialUnits);
   };
 
+  const checkIfWinner = async () => {
+    if (!match || !user) return;
+    if (match.winner !== null) return;
+
+    const healthReducer = (totalHealth, tile) => totalHealth + tile.unit.health;
+
+    const playerForceHealth = match.tiles
+      .flat()
+      .filter((tile) => tile.unit && tile.unit.user._id === user._id)
+      .reduce(healthReducer, 0);
+
+    const enemyForceHealth = match.tiles
+      .flat()
+      .filter((tile) => tile.unit && tile.unit.user._id !== user._id)
+      .reduce(healthReducer, 0);
+
+    const matchID = match._id;
+    const user1ID = match.user1._id;
+    const user2ID = match.user2._id;
+    let opponentID;
+
+    if (user._id === user1ID) {
+      opponentID = user2ID;
+    } else {
+      opponentID = user1ID;
+    }
+
+    if (playerForceHealth === 0) {
+      console.log('You lost...');
+      await axios.patch(`/api/matches/${matchID}`, {
+        winner: opponentID,
+      });
+    }
+
+    if (enemyForceHealth === 0) {
+      console.log('You won!');
+      await axios.patch(`/api/matches/${matchID}`, {
+        winner: user._id,
+      });
+    }
+  };
+
   useEffect(() => {
     if (match?.__v === matchVersion) return;
     initializeTiles();
     initializeUnits();
     setMatchVersion(match?.__v);
+
+    checkIfWinner();
   }, [match]);
 
   const isInvalidMove = (from, to) => {
