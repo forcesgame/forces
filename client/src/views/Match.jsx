@@ -130,6 +130,39 @@ function Match() {
     );
   }
 
+  if (match.data?.winner) {
+    if (match.data.winner._id === user.data._id) {
+      if (systemMessage !== 'You won!') setSystemMessage('You won!');
+    } else if (systemMessage !== 'You lost...') setSystemMessage('You lost...');
+
+    return (
+      <Container style={{ width: '85vmin', height: '85vmin' }} className="p-5">
+        <span>
+          {systemMessage}
+        </span>
+        <Map
+          match={match.data}
+          user={user.data}
+          setMatchTiles={setMatchTiles}
+          setMatchUnits={setMatchUnits}
+          setSystemMessage={setSystemMessage}
+        />
+        <Button
+          className="mt-1"
+          onClick={async () => {
+            await axios.patch(`/api/matches/${match.data._id}`, {
+              gameOverConfirmed: user.data._id,
+            });
+          }}
+          type="submit"
+          variant="warning"
+        >
+          Return to Queue
+        </Button>
+      </Container>
+    );
+  }
+
   return (
     <Container style={{ width: '85vmin', height: '85vmin' }} className="p-5">
       <span>

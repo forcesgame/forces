@@ -56,6 +56,20 @@ function Versus() {
   }
 
   if (match.data) {
+    let gameOverConfirmed = false;
+    if (match.data.gameOverConfirmed) {
+      for (let i = 0; i < match.data.gameOverConfirmed.length; i += 1) {
+        if (match.data.gameOverConfirmed[i]._id === user.data?._id) {
+          gameOverConfirmed = true;
+          break;
+        }
+      }
+    }
+
+    if (gameOverConfirmed) {
+      return (<Queue />);
+    }
+
     return (
       <Match />
     );

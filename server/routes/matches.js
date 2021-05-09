@@ -51,13 +51,19 @@ router.get('/matches/:id', async (req, res) => {
  */
 router.get('/matches/users/:userID', async (req, res) => {
   try {
-    const match = await Match.findOne({
+    const matches = await Match.find({
       $or: [
         { user1: req.params.userID }, { user2: req.params.userID }],
-      inProgress: true,
     });
 
-    res.send(match);
+    for (let i = 0; i < matches.length; i += 1) {
+      if (matches[i].gameOverConfirmed.length < 2) {
+        res.send(matches[i]);
+        return;
+      }
+    }
+
+    res.end();
   } catch (error) {
     res.status(400);
     res.send({
@@ -79,21 +85,6 @@ router.get('/matches/users/:userID', async (req, res) => {
  */
 router.post('/matches', async (req, res) => {
   try {
-    const user1Match = await Match.findOne({
-      $or: [
-        { user1: req.body.user1ID }, { user2: req.body.user1ID }],
-    });
-
-    const user2Match = await Match.findOne({
-      $or: [
-        { user1: req.body.user2ID }, { user2: req.body.user2ID }],
-    });
-
-    if (user1Match || user2Match) {
-      res.end();
-      return;
-    }
-
     await Utilities.generateMatch(req.body.user1ID, req.body.user2ID);
     const match = await Match.findOne({ user1: req.body.user1ID });
     res.send(match);
@@ -121,6 +112,19 @@ router.patch('/matches/:id', async (req, res) => {
 
     if (req.body.currentTurn) {
       match.currentTurn = req.body.currentTurn;
+    }
+
+    if (req.body.gameOverConfirmed) {
+      const userIDToAdd = req.body.gameOverConfirmed;
+      const gameOverConfirmedUserIDs = match.gameOverConfirmed.map((user) => user._id);
+
+      if (!gameOverConfirmedUserIDs.includes(userIDToAdd)) {
+        match.gameOverConfirmed.push(userIDToAdd);
+      }
+    }
+
+    if (req.body.winner) {
+      match.winner = req.body.winner;
     }
 
     // TODO only update tile if change occurred ("change differential")
