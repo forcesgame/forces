@@ -80,13 +80,15 @@ const Tile = ({ tile, onClick }) => {
 };
 
 function Map({
-  match, user, setMatchTiles, setSystemMessage,
+  match, user, setMatchTiles, setMatchUnits, setSystemMessage,
 }) {
+  const [matchVersion, setMatchVersion] = useState(-1);
   const [renderTiles, setRenderTiles] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [tileFrom, setTileFrom] = useState(null);
   const [tileTo, setTileTo] = useState(null);
   const [tiles, setTiles] = useState([]);
+  const [units, setUnits] = useState([]);
 
   const initializeTiles = () => {
     if (!match) return;
@@ -96,9 +98,21 @@ function Map({
     setTiles(initialTiles);
   };
 
+  const initializeUnits = () => {
+    if (!match) return;
+    const initialUnits = [];
+    match.tiles.flat().forEach((tile) => {
+      if (tile.unit) initialUnits.push(tile.unit);
+    });
+
+    setUnits(initialUnits);
+  };
+
   useEffect(() => {
-    if (tiles.length !== 0 && match?.currentTurn._id === user?._id) return;
+    if (match?.__v === matchVersion) return;
     initializeTiles();
+    initializeUnits();
+    setMatchVersion(match?.__v);
   }, [match]);
 
   const isInvalidMove = (from, to) => {
@@ -119,12 +133,13 @@ function Map({
 
     for (let i = 0; i < newTiles.length; i += 1) {
       const tile = newTiles[i];
-      if (tile._id === tileFrom._id) {
+
+      if (tileTo && tile._id === tileFrom._id) {
         tile.unit = null;
         setTileFrom(null);
       }
 
-      if (tile._id === tileTo._id) {
+      if (tileTo && tile._id === tileTo._id) {
         tile.unit = selectedUnit;
         tile.unit.stamina -= tile.staminaCost;
         if (tile.unit.stamina < 0) tile.unit.stamina = 0;
@@ -138,22 +153,28 @@ function Map({
     setTiles(newTiles);
   };
 
-  const updateMatchTiles = () => {
-    // shallow copy
-    const newMatchTiles = tiles.map((tile) => ({ ...tile }));
+  const updateUnits = () => {
+    const newUnits = [...units];
 
-    // "unpopulate" units
-    for (let i = 0; i < newMatchTiles.length; i += 1) {
-      const tile = newMatchTiles[i];
-      if (tile.unit) {
-        tile.unit = tile.unit._id;
+    for (let i = 0; i < units.length; i += 1) {
+      const unit = newUnits[i];
+      const tile = tiles.find((t) => t.unit?._id === unit._id);
+
+      if (tile) {
+        unit.health = tile.unit.health;
+        unit.stamina = tile.unit.stamina;
       }
     }
 
-    setMatchTiles(newMatchTiles);
+    setUnits(newUnits);
   };
 
-  useEffect(() => {
+  const updateTilesAndUnits = () => {
+    updateTiles();
+    updateUnits();
+  };
+
+  useEffect(async () => {
     if (!selectedUnit || !tileFrom || !tileTo) return;
 
     if (selectedUnit.stamina <= 0) {
@@ -166,8 +187,7 @@ function Map({
       return;
     }
 
-    updateTiles();
-    updateMatchTiles();
+    updateTilesAndUnits();
   }, [tileTo]);
 
   const resetSelection = () => {
@@ -231,7 +251,7 @@ function Map({
         `);
   };
 
-  const onClick = (event) => {
+  const onClick = async (event) => {
     const tileID = event.target.value;
     const clickedTile = tiles.find((_tile) => _tile._id === tileID);
 
@@ -277,6 +297,7 @@ function Map({
         }
 
         attackUnitOn(clickedTile);
+        updateTilesAndUnits();
         setSelectedUnit(null);
       } else {
         setSelectedUnit(null);
@@ -300,6 +321,10 @@ function Map({
     for (let i = 0; i < tiles.length; i += 1) {
       const tile = tiles[i];
 
+      if (tile.unit && tile.unit.health <= 0) {
+        tile.unit = null;
+      }
+
       if (tile.unit && selectedUnit) {
         tile.isSelected = tile.unit._id === selectedUnit._id;
       } else if (tileTo && tile._id === tileTo._id && !selectedUnit) {
@@ -320,9 +345,34 @@ function Map({
     setRenderTiles(newRenderTiles);
   };
 
+  const syncMatchTiles = () => {
+    // shallow copy
+    const newMatchTiles = tiles.map((tile) => ({ ...tile }));
+
+    // "unpopulate" units
+    for (let i = 0; i < newMatchTiles.length; i += 1) {
+      const tile = newMatchTiles[i];
+      if (tile.unit) {
+        tile.unit = tile.unit._id;
+      }
+    }
+
+    setMatchTiles(newMatchTiles);
+  };
+
+  const syncMatchUnits = () => {
+    setMatchUnits(units.map((unit) => ({ ...unit })));
+  };
+
+  const syncMatchTilesAndUnits = () => {
+    syncMatchTiles();
+    syncMatchUnits();
+  };
+
   useEffect(() => {
     updateRenderTiles();
-  }, [match, selectedUnit, tileFrom, tileTo, tiles]);
+    syncMatchTilesAndUnits();
+  }, [match, selectedUnit, tileFrom, tileTo, tiles, units]);
 
   if (!match || !user) {
     return (
