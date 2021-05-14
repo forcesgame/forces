@@ -38,7 +38,7 @@ const Unit = ({ unit }) => {
     >
       {emoji}
       <div style={{
-        fontSize: '1.5vmin',
+        fontSize: '35%',
       }}
       >
         <mark style={unit.isEnemy ? enemyStyle : allyStyle}>

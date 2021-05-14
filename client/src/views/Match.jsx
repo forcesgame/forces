@@ -156,7 +156,10 @@ function Match() {
 
     return (
       <Container style={{ width: '85vmin', height: '85vmin' }} className="p-5">
-        <h1>
+        <p style={{
+          fontSize: '200%',
+        }}
+        >
           <span style={allyStyle}>
             {user.data?.username}
           </span>
@@ -166,10 +169,7 @@ function Match() {
           <span style={enemyStyle}>
             {enemyUsername}
           </span>
-        </h1>
-        <span>
-          {systemMessage}
-        </span>
+        </p>
         <Map
           match={match.data}
           user={user.data}
@@ -195,7 +195,10 @@ function Match() {
 
   return (
     <Container style={{ width: '85vmin', height: '85vmin' }} className="p-5">
-      <h1>
+      <p style={{
+        fontSize: '200%',
+      }}
+      >
         <span style={allyStyle}>
           {user.data?.username}
         </span>
@@ -205,7 +208,7 @@ function Match() {
         <span style={enemyStyle}>
           {enemyUsername}
         </span>
-      </h1>
+      </p>
       <span>
         {systemMessage}
       </span>
