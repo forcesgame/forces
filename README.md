@@ -8,6 +8,10 @@ Lee](https://github.com/benjamin0821), and [Patrick
 Silvestre](https://github.com/pjsilvestre) for CMPE 195B at San Jose State
 University during the Spring 2021 semester.
 
+## Demo Video
+
+[![demo-video](https://img.youtube.com/vi/l-R6Tlvkdhw/0.jpg)](https://www.youtube.com/watch?v=l-R6Tlvkdhw)
+
 ## Running in Development Mode
 
 [Node](https://nodejs.org/en/) required.
@@ -35,7 +39,3 @@ cd react-ui
 npm install
 npm run start
 ```
-
-## Demo Video
-
-[![demo-video](https://img.youtube.com/vi/l-R6Tlvkdhw/0.jpg)](https://www.youtube.com/watch?v=l-R6Tlvkdhw)
