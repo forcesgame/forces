@@ -37,6 +37,38 @@ const TurnButton = ({ currentTurn, currentUser, endTurn }) => {
   );
 };
 
+const ReturnToQueueButton = ({ match, user }) => {
+  const [buttonText, setButtonText] = useState('Return to Queue');
+
+  if (buttonText === 'Returning to Queue...') {
+    return (
+      <Button
+        className="mt-1"
+        disabled
+        variant="warning"
+      >
+        {buttonText}
+      </Button>
+    );
+  }
+
+  return (
+    <Button
+      className="mt-1"
+      onClick={async () => {
+        setButtonText('Returning to Queue...');
+        await axios.patch(`/api/matches/${match._id}`, {
+          gameOverConfirmed: user._id,
+        });
+      }}
+      type="submit"
+      variant="warning"
+    >
+      {buttonText}
+    </Button>
+  );
+};
+
 function Match() {
   const auth0User = useAuth0().user;
   const [auth0Username, setAuth0Username] = useState('');
@@ -167,18 +199,10 @@ function Match() {
           setMatchUnits={setMatchUnits}
           setSystemMessage={setSystemMessage}
         />
-        <Button
-          className="mt-1"
-          onClick={async () => {
-            await axios.patch(`/api/matches/${match.data._id}`, {
-              gameOverConfirmed: user.data._id,
-            });
-          }}
-          type="submit"
-          variant="warning"
-        >
-          Return to Queue
-        </Button>
+        <ReturnToQueueButton
+          match={match.data}
+          user={user.data}
+        />
       </Container>
     );
   }
