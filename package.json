@@ -6,7 +6,7 @@
     "node": "14.x"
   },
   "scripts": {
-    "start": "node server",
+    "start": "node server --trace-warnings",
     "devStart": "nodemon --trace-deprecation --trace-warnings --watch server server",
     "build": "cd client/ && npm install && npm run build"
   },
