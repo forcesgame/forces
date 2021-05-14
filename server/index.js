@@ -39,7 +39,7 @@ mongoose.set('useFindAndModify', false);
 mongoose
   .connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    app.listen(5000, () => {
-      console.log('API server listening on port 5000...');
+    app.listen(process.env.PORT || 5000, () => {
+      console.log(`API server listening on port ${process.env.PORT ? process.env.PORT : '5000'}...`);
     });
   });
