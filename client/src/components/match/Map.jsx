@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const Unit = ({ unit }) => {
-  let emoji = '';
-  let stats = '';
+  if (!unit) {
+    return (
+      <></>
+    );
+  }
 
-  if (!unit || !unit.type) {
-    emoji = '';
-  } else if (unit.type === 'INFANTRY') {
+  let emoji = '';
+
+  if (unit.type === 'INFANTRY') {
     emoji = '✌️';
   } else if (unit.type === 'BAZOOKA') {
     emoji = '🖐️️️';
@@ -15,10 +18,17 @@ const Unit = ({ unit }) => {
     emoji = '✊️';
   }
 
-  if (unit) {
-    const { health, rating, stamina } = unit;
-    stats = `${health} | ${rating} | ${stamina}`;
-  }
+  const { health, rating, stamina } = unit;
+  const stats = `${health} | ${rating} | ${stamina}`;
+
+  const enemyStyle = {
+    backgroundColor: '#dc3545',
+    color: 'white',
+  };
+  const allyStyle = {
+    backgroundColor: '#007bff',
+    color: 'white',
+  };
 
   return (
     <div style={{
@@ -27,14 +37,19 @@ const Unit = ({ unit }) => {
     }}
     >
       {emoji}
-      <div style={{ fontSize: '1.5vmin' }}>
-        {stats}
+      <div style={{
+        fontSize: '1.5vmin',
+      }}
+      >
+        <mark style={unit.isEnemy ? enemyStyle : allyStyle}>
+          {stats}
+        </mark>
       </div>
     </div>
   );
 };
 
-const Tile = ({ tile, onClick }) => {
+const Tile = ({ tile, onClick, user }) => {
   const { isSelected, type, unit } = tile;
   let backgroundColor = '';
   let border;
@@ -58,6 +73,14 @@ const Tile = ({ tile, onClick }) => {
     cursor = 'not-allowed';
   } else {
     cursor = 'pointer';
+  }
+
+  if (unit) {
+    if (unit.user._id !== user._id) {
+      unit.isEnemy = true;
+    } else {
+      unit.isEnemy = false;
+    }
   }
 
   return (
@@ -137,14 +160,12 @@ function Map({
     }
 
     if (playerForceHealth === 0) {
-      console.log('You lost...');
       await axios.patch(`/api/matches/${matchID}`, {
         winner: opponentID,
       });
     }
 
     if (enemyForceHealth === 0) {
-      console.log('You won!');
       await axios.patch(`/api/matches/${matchID}`, {
         winner: user._id,
       });
@@ -383,6 +404,7 @@ function Map({
           key={i}
           tile={tile}
           onClick={onClickFunction}
+          user={user}
         />,
       );
     }
