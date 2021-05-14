@@ -15,7 +15,7 @@ export default function Home() {
 
   const initializeAuth0Username = async () => {
     if (!auth0User) return;
-    const usernameKey = `${process.env.REACT_APP_AUTH0_NAMESPACE}username`;
+    const usernameKey = `https://www.forcesgame.com/username`;
     setAuth0Username(auth0User[usernameKey]);
   };
 

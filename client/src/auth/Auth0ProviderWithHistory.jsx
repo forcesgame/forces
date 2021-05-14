@@ -14,8 +14,8 @@ const Auth0ProviderWithHistory = ({ children }) => {
 
   return (
     <Auth0Provider
-      domain={process.env.REACT_APP_AUTH0_DOMAIN}
-      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
+      domain="forces.us.auth0.com"
+      clientId="Zp9pK5uJrGWmnQ7GL8wnzjJFWdsVbc64"
       redirectUri={window.location.origin}
       onRedirectCallback={onRedirectCallback}
       useRefreshTokens
