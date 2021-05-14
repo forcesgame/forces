@@ -150,25 +150,15 @@ function Match() {
   };
 
   if (match.data?.winner) {
-    if (match.data.winner._id === user.data._id) {
-      if (systemMessage !== 'You won!') setSystemMessage('You won!');
-    } else if (systemMessage !== 'You lost...') setSystemMessage('You lost...');
-
     return (
       <Container style={{ width: '85vmin', height: '85vmin' }} className="p-5">
         <p style={{
           fontSize: '200%',
         }}
         >
-          <span style={allyStyle}>
-            {user.data?.username}
-          </span>
+          {match.data.winner.username}
           {' '}
-          versus
-          {' '}
-          <span style={enemyStyle}>
-            {enemyUsername}
-          </span>
+          wins!
         </p>
         <Map
           match={match.data}
