@@ -87,29 +87,6 @@ export default function Home() {
         <h1>Forces</h1>
         <p>A Browser-Based Multiplayer Tactical Turn-Based Game</p>
       </Jumbotron>
-      <Row>
-        <Col>
-          <Card>
-            <Card.Body>
-              <Card.Img src="#" alt="gameplay-image-1" />
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col>
-          <Card>
-            <Card.Body>
-              <Card.Img src="#" alt="gameplay-image-2" />
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col>
-          <Card>
-            <Card.Body>
-              <Card.Img src="#" alt="gameplay-image-3" />
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
     </Container>
   );
 }
