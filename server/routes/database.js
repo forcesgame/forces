@@ -140,6 +140,20 @@ async function generateMatch(user1ID, user2ID) {
   let user1ActiveUnits = await Unit.find({ user: user1ID, active: true });
   let user2ActiveUnits = await Unit.find({ user: user2ID, active: true });
 
+  for (let i = 0; i < user1ActiveUnits.length; i += 1) {
+    user1ActiveUnits[i].health = user1ActiveUnits[i].maxHealth;
+    user1ActiveUnits[i].stamina = user1ActiveUnits[i].maxStamina;
+
+    await user1ActiveUnits[i].save();
+  }
+
+  for (let i = 0; i < user2ActiveUnits.length; i += 1) {
+    user2ActiveUnits[i].health = user2ActiveUnits[i].maxHealth;
+    user2ActiveUnits[i].stamina = user2ActiveUnits[i].maxStamina;
+
+    await user2ActiveUnits[i].save();
+  }
+
   user1ActiveUnits = shuffle(user1ActiveUnits);
   user2ActiveUnits = shuffle(user2ActiveUnits);
 
