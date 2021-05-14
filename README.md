@@ -1,6 +1,6 @@
 # forces
 
-Deployed at https://forces-game.herokuapp.com/.
+Deployed at https://forcesgame.com.
 
 This repo contains the project developed by [Jesus
 Fuentes](https://github.com/jefuentesnava), [Ben
