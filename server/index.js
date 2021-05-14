@@ -18,7 +18,7 @@ const app = express();
 app.use(express.json());
 
 // serve static files
-app.use(express.static(path.resolve(__dirname, '../client/build')));
+app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
 // mount router modules
 app.use('/api', database);
@@ -30,7 +30,7 @@ app.use('/api', users);
 
 // reroute remaining requests to client React app
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+  res.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
 });
 
 // connect to MongoDB
@@ -39,7 +39,7 @@ mongoose.set('useFindAndModify', false);
 mongoose
   .connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    app.listen(5000, () => {
-      console.log('API server listening on port 5000...');
+    app.listen(process.env.PORT || 5000, () => {
+      console.log(`API server listening on port ${process.env.PORT ? process.env.PORT : '5000'}...`);
     });
   });

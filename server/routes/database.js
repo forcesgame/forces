@@ -122,11 +122,40 @@ async function generateTileRow(rowIndex) {
   return row;
 }
 
+function shuffle(units) {
+  const _units = [...units];
+  for (let i = _units.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = _units[i];
+    _units[i] = _units[j];
+    _units[j] = temp;
+  }
+
+  return _units;
+}
+
 async function generateMatch(user1ID, user2ID) {
   const defaultColumnHeight = 8;
 
-  const user1ActiveUnits = await Unit.find({ user: user1ID, active: true });
-  const user2ActiveUnits = await Unit.find({ user: user2ID, active: true });
+  let user1ActiveUnits = await Unit.find({ user: user1ID, active: true });
+  let user2ActiveUnits = await Unit.find({ user: user2ID, active: true });
+
+  for (let i = 0; i < user1ActiveUnits.length; i += 1) {
+    user1ActiveUnits[i].health = user1ActiveUnits[i].maxHealth;
+    user1ActiveUnits[i].stamina = user1ActiveUnits[i].maxStamina;
+
+    await user1ActiveUnits[i].save();
+  }
+
+  for (let i = 0; i < user2ActiveUnits.length; i += 1) {
+    user2ActiveUnits[i].health = user2ActiveUnits[i].maxHealth;
+    user2ActiveUnits[i].stamina = user2ActiveUnits[i].maxStamina;
+
+    await user2ActiveUnits[i].save();
+  }
+
+  user1ActiveUnits = shuffle(user1ActiveUnits);
+  user2ActiveUnits = shuffle(user2ActiveUnits);
 
   const tiles = [];
 
@@ -135,27 +164,55 @@ async function generateMatch(user1ID, user2ID) {
   }
 
   const topRow = tiles[0];
-  for (let i = 0; i < user1ActiveUnits.length; i += 1) {
-    user1ActiveUnits[i].health = user1ActiveUnits[i].maxHealth;
-    user1ActiveUnits[i].stamina = user1ActiveUnits[i].maxStamina;
-    await user1ActiveUnits[i].save();
+  const firstToTopRow = tiles[1];
 
-    const tileID = topRow[i];
+  let user1RemainingUnitCount = user1ActiveUnits.length;
+
+  while (user1RemainingUnitCount > 0) {
+    const randomIndex = Math.floor(Math.random() * 8);
+    const rowIndex = Math.floor(Math.random() * 2);
+
+    let tileID;
+
+    if (rowIndex === 0) {
+      tileID = topRow[randomIndex];
+    } else {
+      tileID = firstToTopRow[randomIndex];
+    }
+
     const tile = await Tile.findById(tileID);
-    tile.unit = user1ActiveUnits[i];
-    await tile.save();
+
+    if (!tile.unit) {
+      tile.unit = user1ActiveUnits[user1RemainingUnitCount - 1];
+      await tile.save();
+      user1RemainingUnitCount -= 1;
+    }
   }
 
+  const firstToBottomRow = tiles[6];
   const bottomRow = tiles[7];
-  for (let i = 0; i < user2ActiveUnits.length; i += 1) {
-    user2ActiveUnits[i].health = user2ActiveUnits[i].maxHealth;
-    user2ActiveUnits[i].stamina = user2ActiveUnits[i].maxStamina;
-    await user2ActiveUnits[i].save();
 
-    const tileID = bottomRow[i];
+  let user2RemainingUnitCount = user2ActiveUnits.length;
+
+  while (user2RemainingUnitCount > 0) {
+    const randomIndex = Math.floor(Math.random() * 8);
+    const rowIndex = Math.floor(Math.random() * 2);
+
+    let tileID;
+
+    if (rowIndex === 0) {
+      tileID = bottomRow[randomIndex];
+    } else {
+      tileID = firstToBottomRow[randomIndex];
+    }
+
     const tile = await Tile.findById(tileID);
-    tile.unit = user2ActiveUnits[i];
-    await tile.save();
+
+    if (!tile.unit) {
+      tile.unit = user2ActiveUnits[user2RemainingUnitCount - 1];
+      await tile.save();
+      user2RemainingUnitCount -= 1;
+    }
   }
 
   const match = new Match({

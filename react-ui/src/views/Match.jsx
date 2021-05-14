@@ -37,16 +37,49 @@ const TurnButton = ({ currentTurn, currentUser, endTurn }) => {
   );
 };
 
+const ReturnToQueueButton = ({ match, user }) => {
+  const [buttonText, setButtonText] = useState('Return to Queue');
+
+  if (buttonText === 'Returning to Queue...') {
+    return (
+      <Button
+        className="mt-1"
+        disabled
+        variant="warning"
+      >
+        {buttonText}
+      </Button>
+    );
+  }
+
+  return (
+    <Button
+      className="mt-1"
+      onClick={async () => {
+        setButtonText('Returning to Queue...');
+        await axios.patch(`/api/matches/${match._id}`, {
+          gameOverConfirmed: user._id,
+        });
+      }}
+      type="submit"
+      variant="warning"
+    >
+      {buttonText}
+    </Button>
+  );
+};
+
 function Match() {
   const auth0User = useAuth0().user;
   const [auth0Username, setAuth0Username] = useState('');
+  const [enemyUsername, setEnemyUsername] = useState('');
   const [matchTiles, setMatchTiles] = useState([]);
   const [matchUnits, setMatchUnits] = useState([]);
   const [systemMessage, setSystemMessage] = useState('...');
 
   const initializeAuth0Username = async () => {
     if (!auth0User) return;
-    const usernameKey = `${process.env.REACT_APP_AUTH0_NAMESPACE}username`;
+    const usernameKey = `https://www.forcesgame.com/username`;
     setAuth0Username(auth0User[usernameKey]);
   };
 
@@ -59,6 +92,15 @@ function Match() {
 
   const match = useQuery(['matches', auth0Username], async () => {
     const response = await axios.get(`/api/matches/users/${user.data._id}`);
+
+    const currentUserID = user.data._id;
+    const user1ID = response.data.user1._id;
+
+    if (currentUserID === user1ID) {
+      setEnemyUsername(response.data.user2.username);
+    } else {
+      setEnemyUsername(response.data.user1.username);
+    }
     return response.data;
   }, {
     enabled: !!user.data,
@@ -130,16 +172,26 @@ function Match() {
     );
   }
 
-  if (match.data?.winner) {
-    if (match.data.winner._id === user.data._id) {
-      if (systemMessage !== 'You won!') setSystemMessage('You won!');
-    } else if (systemMessage !== 'You lost...') setSystemMessage('You lost...');
+  const enemyStyle = {
+    backgroundColor: '#dc3545',
+    color: 'white',
+  };
+  const allyStyle = {
+    backgroundColor: '#007bff',
+    color: 'white',
+  };
 
+  if (match.data?.winner) {
     return (
       <Container style={{ width: '85vmin', height: '85vmin' }} className="p-5">
-        <span>
-          {systemMessage}
-        </span>
+        <p style={{
+          fontSize: '200%',
+        }}
+        >
+          {match.data.winner.username}
+          {' '}
+          wins!
+        </p>
         <Map
           match={match.data}
           user={user.data}
@@ -147,24 +199,30 @@ function Match() {
           setMatchUnits={setMatchUnits}
           setSystemMessage={setSystemMessage}
         />
-        <Button
-          className="mt-1"
-          onClick={async () => {
-            await axios.patch(`/api/matches/${match.data._id}`, {
-              gameOverConfirmed: user.data._id,
-            });
-          }}
-          type="submit"
-          variant="warning"
-        >
-          Return to Queue
-        </Button>
+        <ReturnToQueueButton
+          match={match.data}
+          user={user.data}
+        />
       </Container>
     );
   }
 
   return (
     <Container style={{ width: '85vmin', height: '85vmin' }} className="p-5">
+      <p style={{
+        fontSize: '200%',
+      }}
+      >
+        <span style={allyStyle}>
+          {user.data?.username}
+        </span>
+        {' '}
+        versus
+        {' '}
+        <span style={enemyStyle}>
+          {enemyUsername}
+        </span>
+      </p>
       <span>
         {systemMessage}
       </span>

@@ -29,7 +29,7 @@ npm run devStart
 ### Starting the client
 
 ```bash
-cd client
+cd react-ui
 npm install
 npm run start
 ```
