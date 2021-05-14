@@ -40,6 +40,7 @@ const TurnButton = ({ currentTurn, currentUser, endTurn }) => {
 function Match() {
   const auth0User = useAuth0().user;
   const [auth0Username, setAuth0Username] = useState('');
+  const [enemyUsername, setEnemyUsername] = useState('');
   const [matchTiles, setMatchTiles] = useState([]);
   const [matchUnits, setMatchUnits] = useState([]);
   const [systemMessage, setSystemMessage] = useState('...');
@@ -59,6 +60,15 @@ function Match() {
 
   const match = useQuery(['matches', auth0Username], async () => {
     const response = await axios.get(`/api/matches/users/${user.data._id}`);
+
+    const currentUserID = user.data._id;
+    const user1ID = response.data.user1._id;
+
+    if (currentUserID === user1ID) {
+      setEnemyUsername(response.data.user2.username);
+    } else {
+      setEnemyUsername(response.data.user1.username);
+    }
     return response.data;
   }, {
     enabled: !!user.data,
@@ -130,6 +140,15 @@ function Match() {
     );
   }
 
+  const enemyStyle = {
+    backgroundColor: '#dc3545',
+    color: 'white',
+  };
+  const allyStyle = {
+    backgroundColor: '#007bff',
+    color: 'white',
+  };
+
   if (match.data?.winner) {
     if (match.data.winner._id === user.data._id) {
       if (systemMessage !== 'You won!') setSystemMessage('You won!');
@@ -137,6 +156,17 @@ function Match() {
 
     return (
       <Container style={{ width: '85vmin', height: '85vmin' }} className="p-5">
+        <h1>
+          <span style={allyStyle}>
+            {user.data?.username}
+          </span>
+          {' '}
+          versus
+          {' '}
+          <span style={enemyStyle}>
+            {enemyUsername}
+          </span>
+        </h1>
         <span>
           {systemMessage}
         </span>
@@ -165,6 +195,17 @@ function Match() {
 
   return (
     <Container style={{ width: '85vmin', height: '85vmin' }} className="p-5">
+      <h1>
+        <span style={allyStyle}>
+          {user.data?.username}
+        </span>
+        {' '}
+        versus
+        {' '}
+        <span style={enemyStyle}>
+          {enemyUsername}
+        </span>
+      </h1>
       <span>
         {systemMessage}
       </span>

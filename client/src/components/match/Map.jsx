@@ -76,11 +76,7 @@ const Tile = ({ tile, onClick, user }) => {
   }
 
   if (unit) {
-    if (unit.user._id !== user._id) {
-      unit.isEnemy = true;
-    } else {
-      unit.isEnemy = false;
-    }
+    unit.isEnemy = unit.user._id !== user._id;
   }
 
   return (
