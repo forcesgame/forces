@@ -1,6 +1,8 @@
 # forces
 
-Deployed at https://forcesgame.com.
+~Deployed at https://forcesgame.com.~
+
+No longer deployed due to Heroku's removal of [free product plans](https://blog.heroku.com/next-chapter).
 
 This repo contains the project developed by [Jesus
 Fuentes](https://github.com/jefuentesnava), [Ben
